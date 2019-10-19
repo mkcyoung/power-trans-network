@@ -12,6 +12,9 @@
      "links":[]
  };
 let that = this;
+
+/** DATA LOADING AND CLASS CALLING */
+
  //  Active load
 d3.csv("data/PowerSystem_csvs/activeLoad.csv").then(csvData => {
 
@@ -50,44 +53,52 @@ d3.csv("data/PowerSystem_csvs/activeLoad.csv").then(csvData => {
         });
     });
 
-console.log("Power net",this.powNet);
-});
-
 /** EDGE features
  * 1) Current
  * 2) Maximum line current
  * 3) Active Power flow
  */
 
- //  Current
- d3.csv("data/PowerSystem_csvs/current.csv").then(csvData => {
-    
-    //Create a unique "id" field for edge
-    csvData.forEach( (d, i) => {
-            d.id = i+1;            
+    //  Current
+    d3.csv("data/PowerSystem_csvs/current.csv").then(csvData => {
+        //Creating link properties and adding in current
+        csvData.forEach( (d, i) => {
+            this.powNet.links.push({
+                "From": d.From,
+                "To": d.To,
+                "current": Object.entries(d).slice(2),
+                "mLC": null,
+                "aPF": null
+            })          
+        });
     });
-    console.log("Current",csvData);
-});
 
-// Maximum line current
-d3.csv("data/PowerSystem_csvs/maxLineCurrent.csv").then(csvData => {
+    // Maximum line current
+    d3.csv("data/PowerSystem_csvs/maxLineCurrent.csv").then(csvData => {
 
-    //Create a unique "id" field for each node
-    csvData.forEach( (d, i) => {
-        d.id = i+1;
+        //Add maximum line currents to links
+        csvData.forEach( (d, i) => {
+            if((d.From == this.powNet.links[i]['From']) && (d.To == this.powNet.links[i]['To'])){
+                this.powNet.links[i].mLC = +d.Imax;
+            }
+        });
+        console.log("Max Line Current",csvData);
     });
-    console.log("Max Line Current",csvData);
-});
 
-//active power flow
-d3.csv("data/PowerSystem_csvs/activePowerFlow.csv").then(csvData => {
+    //active power flow
+    d3.csv("data/PowerSystem_csvs/activePowerFlow.csv").then(csvData => {
 
-    //Create a unique "id" field for each node
-    csvData.forEach( (d, i) => {
-        d.id = i+1;
+        csvData.forEach( (d, i) => {
+            if ((d.From == this.powNet.links[i]['From']) && (d.To == this.powNet.links[i]['To'])){
+                this.powNet.links[i].aPF = Object.entries(d).slice(2)
+            }
+        });
     });
-    console.log("Active power flow",csvData);
+
+
+console.log("Power net",this.powNet);
 });
+console.log("Power net outside",this.powNet);
  
 //TODO get this into a node-link format
 
