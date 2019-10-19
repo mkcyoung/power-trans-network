@@ -6,34 +6,51 @@
  * 2) Voltage
  * 3) Charging Station Power */
  
+ //Initializaing power network object
+ this.powNet = {
+     "nodes":[],
+     "links":[]
+ };
+let that = this;
  //  Active load
 d3.csv("data/PowerSystem_csvs/activeLoad.csv").then(csvData => {
+
+    //Adding active load to power net object w/ id
+    csvData.forEach( (d, i) => {
+        this.powNet.nodes.push({
+            "id": d[""],
+            "aLoad": Object.entries(d).slice(1),
+            "volt": null,
+            "chSP": null
+        });          
+    });
     
-    //Create a unique "id" field for node
-    csvData.forEach( (d, i) => {
-            d.id = d[""];            
+    // Voltage
+    d3.csv("data/PowerSystem_csvs/voltage.csv").then(csvData => {
+        //Adding voltage to power net object nodes
+        csvData.forEach( (d, i) => {
+            if (this.powNet.nodes[i].id == d[""]){
+                this.powNet.nodes[i].volt = Object.entries(d).slice(1)
+            }
+        });
     });
-    console.log("Active Load",csvData);
-});
 
-// Voltage
-d3.csv("data/PowerSystem_csvs/voltage.csv").then(csvData => {
+    //Charging station power
+    //Stations 1-7 belong to nodes 2,13,9,33,25,31, & 8.
+    d3.csv("data/PowerSystem_csvs/chargingStationPower.csv").then(csvData => {
 
-    //Create a unique "id" field for each node
-    csvData.forEach( (d, i) => {
-        d.id = d[""];
+        //Adding charging station power to correct nodes
+        stations = ["n2","n13","n9","n33","n25","n31","n8"];
+        csvData.forEach( (d, i) => {
+            this.powNet.nodes.forEach( (e,j) => {
+                if(e.id == stations[i]){
+                    e["chSP"] = Object.entries(d).slice(1);
+                } 
+            })
+        });
     });
-    console.log("Voltage",csvData);
-});
 
-//Charging station power
-d3.csv("data/PowerSystem_csvs/chargingStationPower.csv").then(csvData => {
-
-    //Create a unique "id" field for each node
-    csvData.forEach( (d, i) => {
-        d.id = d[""];
-    });
-    console.log("Charging Station Power",csvData);
+console.log("Power net",this.powNet);
 });
 
 /** EDGE features
@@ -72,4 +89,5 @@ d3.csv("data/PowerSystem_csvs/activePowerFlow.csv").then(csvData => {
     console.log("Active power flow",csvData);
 });
  
-//TODO I think I need to make into a better object? Maybe w/ nodes and links?
+//TODO get this into a node-link format
+
