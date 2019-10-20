@@ -40,9 +40,85 @@ class PowNet {
         }));
         //console.log(min_aload)
 
-        //Finding max/min of 
+        //Finding max/min of voltage
+        let max_volt = d3.max(this.data.nodes.map((d) => {
+            //console.log(d)
+            return d3.max(d.volt.map(f => {
+                //console.log(f[1])
+                return parseFloat(f[1])
+            }))
+        }));
+        let min_volt = d3.min(this.data.nodes.map((d) => {
+            //console.log(d)
+            return d3.min(d.volt.map(f => {
+                //console.log(f[1])
+                return parseFloat(f[1])
+            }))
+        }));
+        // console.log(max_volt,min_volt);
+
+        //Finding max/min of CHSP
+        let max_chsp = d3.max(this.data.nodes.map((d) => {
+            //console.log(d)
+            if(d.chSP!=null){
+            return d3.max(d.chSP.map(f => {
+                //console.log(f[1])
+                return parseFloat(f[1])
+            }))}
+        }));
+        let min_chsp = d3.min(this.data.nodes.map((d) => {
+            //console.log(d)
+            if(d.chSP!=null){
+            return d3.min(d.chSP.map(f => {
+                //console.log(f[1])
+                return parseFloat(f[1])
+            }))}
+        }));
+        //console.log(max_chsp,min_chsp);
+
+        //Finding max/min of active power flow
+        let max_apf = d3.max(this.data.links.map((d) => {
+            //console.log(d)
+            return d3.max(d.aPF.map(f => {
+                //console.log(f[1])
+                return parseFloat(f[1])
+            }))
+        }));
+        let min_apf = d3.min(this.data.links.map((d) => {
+            //console.log(d)
+            return d3.min(d.aPF.map(f => {
+                //console.log(f[1])
+                return parseFloat(f[1])
+            }))
+        }));
+        // console.log(max_apf,min_apf);
 
 
+        //Finding max/min of current
+        let max_current = d3.max(this.data.links.map((d) => {
+            //console.log(d)
+            return d3.max(d.current.map(f => {
+                //console.log(f[1])
+                return parseFloat(f[1])
+            }))
+        }));
+        let min_current = d3.min(this.data.links.map((d) => {
+            //console.log(d)
+            return d3.min(d.current.map(f => {
+                //console.log(f[1])
+                return parseFloat(f[1])
+            }))
+        }));
+        // console.log(max_current,min_current)
+
+        //Creating scales
+        //TODO set ranges
+        this.aLoadScale = d3.scaleLinear().range([0,0]).domain([min_aload,max_aload]);
+        this.voltScale = d3.scaleLinear().range([0,0]).domain([min_volt,max_volt]);
+        this.chspScale = d3.scaleLinear().range([0,0]).domain([min_chsp,max_chsp]);
+
+        this.currentScale = d3.scaleLinear().range([0,0]).domain([min_current,max_current]);
+        this.apfscale = d3.scaleLinear().range([0,0]).domain([min_apf,max_apf]);
 
 
         //Select view1 and append an svg to it
@@ -162,10 +238,6 @@ class PowNet {
                 .text( d=> d.index+1)
                 .attr("fill","black");
         });
-
-        
-
-
 
     }
 

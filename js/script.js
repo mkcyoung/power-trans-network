@@ -14,12 +14,19 @@
  
 
 Promise.all([
+    //Power grid data 
     d3.csv("data/PowerSystem_csvs/activeLoad.csv"),
     d3.csv("data/PowerSystem_csvs/voltage.csv"),
     d3.csv("data/PowerSystem_csvs/chargingStationPower.csv"),
     d3.csv("data/PowerSystem_csvs/current.csv"),
     d3.csv("data/PowerSystem_csvs/maxLineCurrent.csv"),
-    d3.csv("data/PowerSystem_csvs/activePowerFlow.csv")
+    d3.csv("data/PowerSystem_csvs/activePowerFlow.csv"),
+    //Transit data
+    d3.csv("data/TransitSystem_csvs/BEBenergy.csv"),
+    d3.csv("data/TransitSystem_csvs/BEBpower.csv"),
+    d3.csv("data/TransitSystem_csvs/busStationTime.csv"),
+    d3.csv("data/TransitSystem_csvs/speed.csv"),
+
 ]).then(function(files){
 
     //Initializaing power network object
@@ -79,11 +86,78 @@ Promise.all([
             powNet.links[i].aPF = Object.entries(d).slice(2)
         }
     });
-    
     console.log("Power Net: ",powNet);
+
+    /** TRANSIT SYSTEM DATA 
+     * Make nodes and links out of bus stations 
+     * maxes separate bus objects w/ time-point data
+     * depending on what those bus object values are at certain times,
+     * they'll either be present at the station, or on the links
+    */
+
+   // Init object that will contain station data 
+    let transNet = {
+        "nodes":[],
+        "links":[]
+    };
+
+    //Init object that will contain bebs
+    let bebs = [];
+
+    //Adding in BEB energy 
+    files[6].forEach( (d, i) => {
+        bebs.push({
+            "id": d[""],
+            "BusID": i+1,
+            "energy": Object.entries(d).slice(1),
+            "power":null,
+            "OTTC":null,	
+            "KJTC":null,	
+            "CTH":null,	
+            "JRPR":null,	
+            "KPR":null,	
+            "EH":null,	
+            "GS":null	
+        })
+    });
+
+    //Adding in BEB power
+    files[7].forEach( (d, i) => {
+        if (bebs[i].id == d[""]){
+            bebs[i].power = Object.entries(d).slice(1)
+        }
+    });
+
+    //Adding station data to beb objects
+    console.log("Station Data: ",files[8])
+
+    files[8].forEach( (d, i) => {
+        bebs.forEach( (c,j) => {
+            if (bebs[j].BusID == d["BusID"]){
+                bebs[j][d["StationName"]] = Object.entries(d).slice(0,-5)
+            }
+
+        })
+        
+    });
+
+
+    console.log("BEBs",bebs)
+
+
+
+
+
+
+
+
 
     /** Pass data into PowNet class */
     let powNetwork = new PowNet(powNet);
     powNetwork.createNet();
+
+    /** Pass data into TransNet class */
+    let transNetwork = new TransNet();
+    //transNetwork.createNet();
 
 });
