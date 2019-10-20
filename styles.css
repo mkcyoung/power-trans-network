@@ -2,14 +2,14 @@
 .wrapper{
     font-family: "Avenir Next";
     display: grid;
-    grid-template-columns: 1fr 1fr 1fr 1fr;
-    grid-template-rows: 0.5fr 1fr 1fr 1fr 1fr;
+    grid-template-columns: repeat(4,1fr);
+    grid-template-rows: 0.5fr 0.5fr 1fr 1fr 1fr;
     grid-template-areas: 
-            "title title title title"
-            "power power power info"
-            "power power power info"
-            "power power power trans"
-            "power power power trans";
+            "title title title title "
+            "info info info info "
+            "power power trans trans "
+            "power power trans trans  "
+            "power power trans trans ";
     width: 100vw;
     height: 100vh;
 }
@@ -30,9 +30,38 @@
 
 /* Nodes and links classing */
 .nodes{
-    
+    stroke-width: 1px;
 }
 .links{
     stroke: black;
     stroke-width: 2px;
+}
+
+/*tooltip */
+
+.tooltip {
+    position: absolute;
+    text-align: center;
+    width: auto;
+    height: auto;
+    padding: 2px;
+    background: white;
+    stroke: gray;
+    border-radius: 2px;
+    pointer-events: none;
+    font-family: "Avenir Next";
+}
+
+.tooltip h3{
+    margin: auto;
+    font-size: 24px;
+    font-weight:bolder;
+    color: #484b5a;
+}
+
+.tooltip p{
+    margin: auto;
+    font-size: 15px;
+    font-weight: bolder;
+    color: #81849a;
 }

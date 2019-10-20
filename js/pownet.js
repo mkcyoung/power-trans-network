@@ -14,8 +14,11 @@ class PowNet {
 
     /** Builds network based on data passed into object */
     createNet(){
-        console.log("Power Network Onject: ",this.data)
+        console.log("Power Network Object: ",this.data)
         
+        //May need to use this later
+        let that = this;
+
         //Select view1 and append an svg to it
         let powSVG = d3.select(".view1").append("svg")
             .attr("height",this.height+this.margin.top+this.margin.bottom)
@@ -23,12 +26,6 @@ class PowNet {
 
         let netGroup = powSVG.append("g")
             .attr("transform","translate("+this.margin.left+","+this.margin.top+")");
-        
-        //Going to do this with a force-directed graph first
-        var simulation = d3.forceSimulation()
-            .force("link", d3.forceLink().id(function(d) { return d.id; }))
-            .force("charge", d3.forceManyBody().strength(-20))
-            .force("center", d3.forceCenter(this.width / 2, this.height / 2));
 
         // First we create the links in their own group that comes before the node 
         //  group (so the circles will always be on top of the lines)
@@ -39,19 +36,49 @@ class PowNet {
             .data(this.data.links)
             .enter().append("line");
 
+        //make tooltip div
+        d3.select(".view1")
+            .append("div")
+            .attr("class", "tooltip")
+            .attr("id","tooltip")
+            .style("opacity", 0);
+
         // Now we create the node group, and the nodes inside it
         let nodeLayer = netGroup.append("g")
             .attr("class", "nodes");
         let nodes = nodeLayer
             .selectAll("circle")
             .data(this.data.nodes)
-            .enter().append("circle")
-            .attr("r", 5);
+            .join("circle")
+            .attr("r", 5)
+            //tooltip!
+            .on("mouseover", function (d) {
+                d3.select("#tooltip").transition()
+                    .duration(200)
+                    .style("opacity", 0.9);
+                d3.select("#tooltip").html(that.tooltipRender(d))
+                    .style("left", (d3.event.pageX+15) + "px")
+                    .style("top", (d3.event.pageY+15) + "px")
+            })
+            .on("mouseout", function (d) {
+                d3.select("#tooltip").transition()
+                    .duration(500)
+                    .style("opacity", 0)
+            });
         
-        //Add tooltip to nodes
-        nodes.append("title")
-                .text( d => d.id );
-        
+        //Create labels
+        let labelLayer = netGroup.append("g")
+            .attr("class","labels");
+        let labels = labelLayer
+            .selectAll("text")
+            .data(this.data.nodes)
+            .enter().append("text");
+
+        //Going to do this with a force-directed graph first
+        var simulation = d3.forceSimulation()
+            .force("link", d3.forceLink().id(function(d) { return d.id; }))
+            .force("charge", d3.forceManyBody().strength(-20))
+            .force("center", d3.forceCenter(this.width / 2, this.height / 2));
 
         // Feeding data to simulation
         simulation.nodes(this.data.nodes);
@@ -85,12 +112,33 @@ class PowNet {
                 .attr("cy", function (d) {
                     return d.y;
                 });
+
+            labels
+                .attr("x",d => d.x)
+                .attr("y",d => d.y - 8)
+                .text( d=> d.id);
         });
 
         
 
 
 
+    }
+
+    /**
+     * Returns html that can be used to render the tooltip.
+     * @param data
+     * @returns {string}
+     */
+    tooltipRender(data) {
+        let text = "<h3> Node: " + data.id + "</h3>";
+        //Adds in relevant data
+        text = text + "<p> Active Load: "+ parseFloat(data.aLoad[0][1]).toFixed(2)+" kW</p>";
+        text = text + "<p> Voltage: "+ parseFloat(data.volt[0][1]).toFixed(2)+" kV</p>";
+        if (data.chSP != null){
+            text = text + "<p> Active Power: "+ parseFloat(data.chSP[0][1]).toFixed(2)+" kW</p>"
+        } 
+        return text;
     }
 
 }
