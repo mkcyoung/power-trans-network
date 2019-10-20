@@ -1,3 +1,4 @@
+/* Site Layout CSS */
 .wrapper{
     font-family: "Avenir Next";
     display: grid;
@@ -24,4 +25,14 @@
 .view1{
     grid-area: power;
     /* background: royalblue; */
+}
+
+
+/* Nodes and links classing */
+.nodes{
+    
+}
+.links{
+    stroke: black;
+    stroke-width: 2px;
 }
