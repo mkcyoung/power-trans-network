@@ -34,7 +34,7 @@
     stroke:black;
 }
 .node:hover{
-    stroke-width: 2px;
+    stroke-width: 3px;
     filter: saturate(1);
 }
 .links{

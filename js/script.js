@@ -90,6 +90,7 @@ Promise.all([
 
     /** TRANSIT SYSTEM DATA 
      * Make nodes and links out of bus stations 
+     * Each node will contain which busses are there at which times
      * maxes separate bus objects w/ time-point data
      * depending on what those bus object values are at certain times,
      * they'll either be present at the station, or on the links
@@ -111,13 +112,8 @@ Promise.all([
             "BusID": i+1,
             "energy": Object.entries(d).slice(1),
             "power":null,
-            "OTTC":null,	
-            "KJTC":null,	
-            "CTH":null,	
-            "JRPR":null,	
-            "KPR":null,	
-            "EH":null,	
-            "GS":null	
+            "Stations": {},
+            "Speeds": {}
         })
     });
 
@@ -129,23 +125,39 @@ Promise.all([
     });
 
     //Adding station data to beb objects
-    console.log("Station Data: ",files[8])
+    //console.log("Station Data: ",files[8])
 
     files[8].forEach( (d, i) => {
         bebs.forEach( (c,j) => {
-            if (bebs[j].BusID == d["BusID"]){
-                bebs[j][d["StationName"]] = Object.entries(d).slice(0,-5)
+            if (c.BusID == d["BusID"]){
+                c.Stations[d["StationName"]] = Object.entries(d).slice(0,-5)
             }
-
         })
-        
     });
 
+    //Adding speed data to beb objects
+    files[9].forEach( (d, i) => {
+        bebs.forEach( (c,j) => {
+            if (c.BusID == d["BusID"]){
+                c.Speeds[d["StationName"]] = Object.entries(d).slice(0,-5)
+            }
+        })
+    });
 
     console.log("BEBs",bebs)
 
 
-
+    /**Questions
+     * 1) Max current units, current exceeds that a lot
+     * 2) How to visualize these networks
+     *      Power connections don't line up w/ pics
+     *      Other than charging statings we don't know where buses are
+     *      In email:  Below is a table indicating the mapping between the Bus Station Number/Name and the Power System Node Number.
+     *      Where is that table?
+     * It doesn't seem like any data in the trans system matters other than charging station stops?
+     * Seems like this only needs 1 network visualization then..... idk
+     *      
+     */
 
 
 
