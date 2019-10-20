@@ -10,6 +10,7 @@ class PowNet {
         this.margin = {top: 20, right: 20, bottom: 20, left: 20};
         this.width = 700 - this.margin.left - this.margin.right;
         this.height = 700 - this.margin.top-this.margin.bottom; 
+
     }
 
     /** Builds network based on data passed into object */
@@ -18,6 +19,31 @@ class PowNet {
         
         //May need to use this later
         let that = this;
+
+        /** Creating Scales */
+
+        //Finding max/min of aLoad
+        let max_aload = d3.max(this.data.nodes.map((d) => {
+            //console.log(d)
+            return d3.max(d.aLoad.map(f => {
+                //console.log(f[1])
+                return parseFloat(f[1])
+            }))
+        }));
+        //console.log(max_aload)
+        let min_aload = d3.min(this.data.nodes.map((d) => {
+            //console.log(d)
+            return d3.min(d.aLoad.map(f => {
+                //console.log(f[1])
+                return parseFloat(f[1])
+            }))
+        }));
+        //console.log(min_aload)
+
+        //Finding max/min of 
+
+
+
 
         //Select view1 and append an svg to it
         let powSVG = d3.select(".view1").append("svg")
@@ -34,7 +60,22 @@ class PowNet {
          // Now let's create the lines
         let links = linkLayer.selectAll("line")
             .data(this.data.links)
-            .enter().append("line");
+            .join("line")
+            .classed("link",true)
+            //tooltip!
+            .on("mouseover", function (d) {
+                d3.select("#tooltip").transition()
+                    .duration(200)
+                    .style("opacity", 0.9);
+                d3.select("#tooltip").html(that.tooltipRenderL(d))
+                    .style("left", (d3.event.pageX+15) + "px")
+                    .style("top", (d3.event.pageY+15) + "px")
+            })
+            .on("mouseout", function (d) {
+                d3.select("#tooltip").transition()
+                    .duration(500)
+                    .style("opacity", 0)
+            });;
 
         //make tooltip div
         d3.select(".view1")
@@ -50,13 +91,15 @@ class PowNet {
             .selectAll("circle")
             .data(this.data.nodes)
             .join("circle")
-            .attr("r", 5)
+            .classed("node",true)
+            .attr("r", d => (d.chSP!=null) ? 10 : 6)
+            .attr("fill", d=> (d.chSP!=null) ? "#4ccc43" : "#f26b6b")
             //tooltip!
             .on("mouseover", function (d) {
                 d3.select("#tooltip").transition()
                     .duration(200)
                     .style("opacity", 0.9);
-                d3.select("#tooltip").html(that.tooltipRender(d))
+                d3.select("#tooltip").html(that.tooltipRenderN(d))
                     .style("left", (d3.event.pageX+15) + "px")
                     .style("top", (d3.event.pageY+15) + "px")
             })
@@ -77,7 +120,7 @@ class PowNet {
         //Going to do this with a force-directed graph first
         var simulation = d3.forceSimulation()
             .force("link", d3.forceLink().id(function(d) { return d.id; }))
-            .force("charge", d3.forceManyBody().strength(-20))
+            .force("charge", d3.forceManyBody().strength(-25))
             .force("center", d3.forceCenter(this.width / 2, this.height / 2));
 
         // Feeding data to simulation
@@ -114,9 +157,10 @@ class PowNet {
                 });
 
             labels
-                .attr("x",d => d.x)
-                .attr("y",d => d.y - 8)
-                .text( d=> d.id);
+                .attr("x",d => d.x-20)
+                .attr("y",d => d.y-5)
+                .text( d=> d.index+1)
+                .attr("fill","black");
         });
 
         
@@ -126,18 +170,34 @@ class PowNet {
     }
 
     /**
-     * Returns html that can be used to render the tooltip.
+     * Returns html that can be used to render the tooltip for nodes
      * @param data
      * @returns {string}
      */
-    tooltipRender(data) {
-        let text = "<h3> Node: " + data.id + "</h3>";
+    tooltipRenderN(data) {
+        let text = null;
+        (data.chSP != null) ? text = "<h3> <span>&#9889;</span> Node: " + data.id + "</h3>": 
+        text = "<h3> Node: " + data.id + "</h3>";
         //Adds in relevant data
         text = text + "<p> Active Load: "+ parseFloat(data.aLoad[0][1]).toFixed(2)+" kW</p>";
         text = text + "<p> Voltage: "+ parseFloat(data.volt[0][1]).toFixed(2)+" kV</p>";
         if (data.chSP != null){
             text = text + "<p> Active Power: "+ parseFloat(data.chSP[0][1]).toFixed(2)+" kW</p>"
         } 
+        return text;
+    }
+
+    /**
+     * Returns html that can be used to render the tooltip for links
+     * @param data
+     * @returns {string}
+     */
+    tooltipRenderL(data) {
+        let text = "<h3>" + data.source.id + ' <span>&#8594;</span> ' + data.target.id +"</h3>";
+        //Adds in relevant data
+        text = text + "<p> Current: "+ parseFloat(data.current[0][1]).toFixed(2)+" A</p>";
+        text = text + "<p> Acitve Power Flow: "+ parseFloat(data.aPF[0][1]).toFixed(2)+" kW</p>";
+        text = text + "<p> Max Line Current: "+ data.mLC.toFixed(2)+" A</p>"
         return text;
     }
 

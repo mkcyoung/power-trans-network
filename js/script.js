@@ -32,7 +32,7 @@ Promise.all([
     files[0].forEach( (d, i) => {
         powNet.nodes.push({
             "id": d[""],
-            "aLoad": Object.entries(d).slice(1),
+            "aLoad": Object.entries(d).slice(1), //.map(f => parseFloat(f[1]), //gets rid of "t1, t2, etc."
             "volt": null,
             "chSP": null
         });          

@@ -6,7 +6,7 @@
     grid-template-rows: 0.5fr 0.5fr 1fr 1fr 1fr;
     grid-template-areas: 
             "title title title title "
-            "info info info info "
+            "power power info info "
             "power power trans trans "
             "power power trans trans  "
             "power power trans trans ";
@@ -31,10 +31,23 @@
 /* Nodes and links classing */
 .nodes{
     stroke-width: 1px;
+    stroke:black;
+}
+.node:hover{
+    stroke-width: 2px;
+    filter: saturate(1);
 }
 .links{
     stroke: black;
     stroke-width: 2px;
+}
+.link:hover{
+    stroke: rgb(0, 153, 255);
+    stroke-width: 4px;
+}
+.labels{
+    font-size: 10px;
+    font-weight: bolder;
 }
 
 /*tooltip */
