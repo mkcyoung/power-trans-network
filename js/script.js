@@ -80,8 +80,7 @@ Promise.all([
         }
     });
 
-
-    console.log("Power Net: ",that.powNet);
+    //console.log("Power Net: ",that.powNet);
 
     /** Pass data into PowNet class */
     let powNetwork = new PowNet(that.powNet);
