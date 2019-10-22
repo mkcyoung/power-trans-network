@@ -210,6 +210,7 @@ class PowNet {
             // Every "tick" of the simulation will create / update each node's 
             //  coordinates; we need to use those coordinates to move the lines
             //  and circles into place
+
             links
                 .attr("x1", function (d) {
                     return d.source.x;
@@ -225,11 +226,28 @@ class PowNet {
                 });
 
             nodes
-                .attr("cx", function (d) {
-                    return d.x;
+                .attr("cx", function (d,i) {
+                    if(d.index < 18){
+                        return 200 + i*10;
+                    }
+                    if((d.index > 21) & (d.index < 25)){
+                        return 120 + (i-19)*50;
+                    }
+                    else{
+                        return d.x;
+                    }
+                    
                 })
-                .attr("cy", function (d) {
-                    return d.y;
+                .attr("cy", function (d,i) {
+                    if(d.index < 18){
+                        return 50 + i*30;
+                    }
+                    if ((d.index > 21) & (d.index < 25)){
+                        return 50 + 2*30;
+                    }
+                    else{
+                        return d.y;
+                    }
                 });
 
             labels
@@ -272,5 +290,6 @@ class PowNet {
         text = text + "<p> Max Line Current: "+ data.mLC.toFixed(2)+" A</p>"
         return text;
     }
+
 
 }
