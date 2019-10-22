@@ -2,14 +2,14 @@
 .wrapper{
     font-family: "Avenir Next";
     display: grid;
-    grid-template-columns: repeat(4,1fr);
+    grid-template-columns: 1fr 1fr 1fr 1fr;
     grid-template-rows: 0.5fr 0.5fr 1fr 1fr 1fr;
     grid-template-areas: 
             "title title title title "
-            "power power info info "
-            "power power trans trans "
-            "power power trans trans  "
-            "power power trans trans ";
+            "power power power table "
+            "power power power table "
+            "power power power table  "
+            "power power power table ";
     width: 100vw;
     height: 100vh;
 }
@@ -42,7 +42,7 @@
     stroke-width: 2px;
 }
 .link:hover{
-    stroke: rgb(0, 153, 255);
+    stroke: rgb(251, 255, 14);
     stroke-width: 4px;
 }
 .labels{

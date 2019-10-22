@@ -8,8 +8,8 @@ class PowNet {
 
         //Margins - the bostock way
         this.margin = {top: 20, right: 20, bottom: 20, left: 20};
-        this.width = 700 - this.margin.left - this.margin.right;
-        this.height = 700 - this.margin.top-this.margin.bottom; 
+        this.width = 1200 - this.margin.left - this.margin.right;
+        this.height = 1200 - this.margin.top-this.margin.bottom; 
 
     }
 
@@ -169,7 +169,7 @@ class PowNet {
             .join("circle")
             .classed("node",true)
             .attr("r", d => (d.chSP!=null) ? 10 : 6)
-            .attr("fill", d=> (d.chSP!=null) ? "#4ccc43" : "#f26b6b")
+            .attr("fill", d=> (d.chSP!=null) ? "#4ccc43" : "orange")
             //tooltip!
             .on("mouseover", function (d) {
                 d3.select("#tooltip").transition()
@@ -213,25 +213,26 @@ class PowNet {
 
             nodes
                 .attr("cx", function (d,i) {
+                    let X_Start = 50;
                     // Main branch from n1 to 18
                     if(d.index < 18){
-                        d.x = 200 + i*10;
-                        return 200 + i*10;
+                        d.x = X_Start + i*10;
+                        return d.x;
                     }
                     //Branch off of 3 containing n23->25
                     if((d.index > 21) & (d.index < 25)){
-                        d.x = 20 + (i-17)*50;
-                        return 20 + (i-17)*50;
+                        d.x = X_Start + (i-20)*50;
+                        return d.x;
                     }
                     //Branch off of 2 containing 19 -> 22
                     if((d.index > 17) & (d.index < 22)){
-                        d.x = 20 + (i-13)*50;
-                        return 20 + (i-13)*50;
+                        d.x = X_Start + (i-15)*50;
+                        return d.x;
                     }
                     // Bracnh off of 6(may change to 13) containing 26->33
                     if( d.index > 24 ){
-                        d.x = 250 + (i-24)*50;
-                        return 250 + (i-24)*50;
+                        d.x = X_Start + (i-23)*50;
+                        return d.x;
                     }
                     else{
                         return d.x;
@@ -240,24 +241,26 @@ class PowNet {
                 })
                 .attr("cy", function (d,i) {
                     // Main branch from n1 to 18
+                    let Y_Start = 50;
+                    let Y_Spacing = 35;
                     if(d.index < 18){
-                        d.y = 50 + i*30;
-                        return 50 + i*30;
+                        d.y = Y_Start + i*Y_Spacing;
+                        return d.y;
                     }
                     //Branch off of 3 containing n23->25
                     if ((d.index > 21) & (d.index < 25)){
-                        d.y = 50 + 2*30;
-                        return 50 + 2*30;
+                        d.y = Y_Start + 2*Y_Spacing;
+                        return d.y;
                     }
                     //Branch off of 2 containing 19 -> 22
                     if((d.index > 17) & (d.index < 22)){
-                        d.y = 50;
-                        return 50;
+                        d.y = Y_Start;
+                        return d.y;
                     }
                     // Branch off of 6 (may change to 13) containing 26->33
                     if(d.index > 24){
-                        d.y = 200;
-                        return 200;
+                        d.y = Y_Start + (i-20)*Y_Spacing;
+                        return d.y;
                     }
                     else{
                         return d.y;
