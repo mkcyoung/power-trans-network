@@ -18,9 +18,9 @@ Promise.all([
     d3.csv("data/PowerSystem_csvs/activeLoad.csv"),
     d3.csv("data/PowerSystem_csvs/voltage.csv"),
     d3.csv("data/PowerSystem_csvs/chargingStationPower.csv"),
-    d3.csv("data/PowerSystem_csvs/current.csv"),
-    d3.csv("data/PowerSystem_csvs/maxLineCurrent.csv"),
-    d3.csv("data/PowerSystem_csvs/activePowerFlow.csv"),
+    d3.csv("data/PowerSystem_csvs/current1.csv"),
+    d3.csv("data/PowerSystem_csvs/maxLineCurrent1.csv"),
+    d3.csv("data/PowerSystem_csvs/activePowerFlow1.csv"),
     //Transit data
     d3.csv("data/TransitSystem_csvs/BEBenergy.csv"),
     d3.csv("data/TransitSystem_csvs/BEBpower.csv"),
