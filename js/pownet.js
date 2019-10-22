@@ -195,9 +195,9 @@ class PowNet {
 
         //Going to do this with a force-directed graph first
         var simulation = d3.forceSimulation()
-            .force("link", d3.forceLink().id(function(d) { return d.id; }))
-            .force("charge", d3.forceManyBody().strength(-25))
-            .force("center", d3.forceCenter(this.width / 2, this.height / 2));
+            .force("link", d3.forceLink().id(function(d) { return d.id; }));
+            // .force("charge", d3.forceManyBody().strength(-25))
+            // .force("center", d3.forceCenter(this.width / 2, this.height / 2));
 
         // Feeding data to simulation
         simulation.nodes(this.data.nodes);
@@ -211,6 +211,59 @@ class PowNet {
             //  coordinates; we need to use those coordinates to move the lines
             //  and circles into place
 
+            nodes
+                .attr("cx", function (d,i) {
+                    // Main branch from n1 to 18
+                    if(d.index < 18){
+                        d.x = 200 + i*10;
+                        return 200 + i*10;
+                    }
+                    //Branch off of 3 containing n23->25
+                    if((d.index > 21) & (d.index < 25)){
+                        d.x = 20 + (i-17)*50;
+                        return 20 + (i-17)*50;
+                    }
+                    //Branch off of 2 containing 19 -> 22
+                    if((d.index > 17) & (d.index < 22)){
+                        d.x = 20 + (i-13)*50;
+                        return 20 + (i-13)*50;
+                    }
+                    // Bracnh off of 6(may change to 13) containing 26->33
+                    if( d.index > 24 ){
+                        d.x = 250 + (i-24)*50;
+                        return 250 + (i-24)*50;
+                    }
+                    else{
+                        return d.x;
+                    }
+                    
+                })
+                .attr("cy", function (d,i) {
+                    // Main branch from n1 to 18
+                    if(d.index < 18){
+                        d.y = 50 + i*30;
+                        return 50 + i*30;
+                    }
+                    //Branch off of 3 containing n23->25
+                    if ((d.index > 21) & (d.index < 25)){
+                        d.y = 50 + 2*30;
+                        return 50 + 2*30;
+                    }
+                    //Branch off of 2 containing 19 -> 22
+                    if((d.index > 17) & (d.index < 22)){
+                        d.y = 50;
+                        return 50;
+                    }
+                    // Branch off of 6 (may change to 13) containing 26->33
+                    if(d.index > 24){
+                        d.y = 200;
+                        return 200;
+                    }
+                    else{
+                        return d.y;
+                    }
+                });
+
             links
                 .attr("x1", function (d) {
                     return d.source.x;
@@ -223,31 +276,6 @@ class PowNet {
                 })
                 .attr("y2", function (d) {
                     return d.target.y;
-                });
-
-            nodes
-                .attr("cx", function (d,i) {
-                    if(d.index < 18){
-                        return 200 + i*10;
-                    }
-                    if((d.index > 21) & (d.index < 25)){
-                        return 120 + (i-19)*50;
-                    }
-                    else{
-                        return d.x;
-                    }
-                    
-                })
-                .attr("cy", function (d,i) {
-                    if(d.index < 18){
-                        return 50 + i*30;
-                    }
-                    if ((d.index > 21) & (d.index < 25)){
-                        return 50 + 2*30;
-                    }
-                    else{
-                        return d.y;
-                    }
                 });
 
             labels
