@@ -272,7 +272,24 @@ class PowNet {
             .attr("y",d => d.y-5)
             .text( d=> d.index+1)
             .attr("fill","black");
+
+
+        /** Charging station interface */
+        let CSGroup = powSVG.append("g")
+            .attr("transform","translate("+(this.width/2-50)+","+this.margin.top+")");
+
+        // Create 7 nodes representing each station
+        let stations = CSGroup.append("g")
+            .attr("class", "csgroup");
+         // Now let's create the lines
+        let station_nodes = stations.selectAll("circle")
+            .data(this.data) //I want this to contain everything relevant to the stations
+            .join("circle");
+
+
     }
+
+
 
     /**
      * Returns html that can be used to render the tooltip for nodes

@@ -188,6 +188,7 @@ Promise.all([
         return Bus_Data;
     }
 
+    console.log("aload",files[0])
      //Adding relevant data to bus station nodes
      pow_stations.forEach( (d, i) => {
          transNet.nodes.push({
@@ -199,7 +200,10 @@ Promise.all([
              "StationNode":Object.assign({},powNet.nodes.filter(f => f.id == pow_stations[i]))[0],
              //"BusDataRaw": files[8].filter(f => f.StationName == name_stations[i]),
              "BusData": bus_Data(name_stations[i]),
-             "chSP": d3.entries(files[2][i]).slice(1) 
+             "chSP": d3.entries(files[2][i]).slice(1),
+             "aLoad": powNet.nodes.filter(f=>f['id']==pow_stations[i])[0].aLoad, //.map(f => parseFloat(f[1]), //gets rid of "t1, t2, etc."
+             "volt": powNet.nodes.filter(f=>f['id']==pow_stations[i])[0].volt
+
          })
      });
 
