@@ -26,6 +26,7 @@ Promise.all([
     d3.csv("data/TransitSystem_csvs/BEBpower.csv"),
     d3.csv("data/TransitSystem_csvs/busStationTime.csv"),
     d3.csv("data/TransitSystem_csvs/speed.csv"),
+    d3.csv("data/TransitSystem_csvs/trans_links.csv")
 
 ]).then(function(files){
 
@@ -155,27 +156,61 @@ Promise.all([
     };
 
     // Can feed all station presence data in this way -> I'll also throw in node data as well
-     console.log("Experiments with stations: ", files[8].filter(f => f.StationName == "OTTC"));
+     //console.log("Experiments with stations: ", files[8].filter(f => f.StationName == "OTTC"));
 
     let pow_stations = ["n2","n13","n9","n33","n25","n31","n8"];
     let num_stations = ["1","2","3","4","5","6","7"];
     let name_stations = ["OTTC","KJTC","CTH","JRPR","KPR","EH","GS"]
 
 
-     //Adding relevant data to 
+    function bus_Data(station_name){
+        let Bus_Data = [];
+        let current_BEB = 0;
+        let bus_list = [];
+        //Experimenting - save this for implementation in other files - or not
+        // goal is to have a stores tuple of sum and unique busses at every time point
+        for (let j = 1; j < 289; j++){
+            files[8].filter(f => f.StationName == station_name).forEach((d,i) => {
+                //console.log(d)
+                current_BEB = current_BEB + parseInt(d[j]);
+                if (parseInt(d[j])){
+                    bus_list.push(d.BusID)
+                }
+                //console.log(current_BEB);
+            })
+            Bus_Data.push({
+                "total": current_BEB, //Tells you how many buses are there at a given time
+                "busses": bus_list //Gives you bus ID's of busses that are there at a given time
+            })
+            current_BEB = 0;
+            bus_list = [];
+        }
+        return Bus_Data;
+    }
+
+     //Adding relevant data to bus station nodes
      pow_stations.forEach( (d, i) => {
          transNet.nodes.push({
              "x":null,
              "y":null,
+             "index": i,
              "StationName": name_stations[i],
              "StationID":num_stations[i],
-             "StationNode":pow_stations[i],
-             "BusData": files[8].filter(f => f.StationName == name_stations[i]),
-             "chSP": d3.entries(files[2][i]).slice(1) //files[2]
+             "StationNode":Object.assign({},powNet.nodes.filter(f => f.id == pow_stations[i]))[0],
+             //"BusDataRaw": files[8].filter(f => f.StationName == name_stations[i]),
+             "BusData": bus_Data(name_stations[i]),
+             "chSP": d3.entries(files[2][i]).slice(1) 
          })
      });
 
-     console.log("Trans net: ",transNet.nodes);
+     //Create links, only attaching source data
+     files[10].forEach( (d, i) => {
+        transNet.links.push({
+            "source": Object.assign({},transNet.nodes.filter(f => f.StationID == d.From))[0],
+            "target": Object.assign({},transNet.nodes.filter(f => f.StationID == d.To))[0],
+            "index":i
+        })
+    });
 
     /**Questions
      * 1) Max current units, current exceeds that a lot
@@ -190,12 +225,14 @@ Promise.all([
      */
 
 
+    console.log("Trans net: ",transNet);
+
     /** Pass data into PowNet class */
     let powNetwork = new PowNet(powNet);
     powNetwork.createNet();
 
     /** Pass data into TransNet class */
-    let transNetwork = new TransNet();
-    //transNetwork.createNet();
+    let transNetwork = new TransNet(transNet);
+    transNetwork.createNet();
 
 });

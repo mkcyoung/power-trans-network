@@ -33,6 +33,7 @@
     stroke-width: 1px;
     stroke:black;
 }
+
 .node:hover{
     stroke-width: 3px;
     filter: saturate(1);

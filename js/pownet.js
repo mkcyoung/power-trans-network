@@ -9,7 +9,7 @@ class PowNet {
         //Margins - the bostock way
         this.margin = {top: 20, right: 20, bottom: 20, left: 20};
         this.width = 1200 - this.margin.left - this.margin.right;
-        this.height = 1200 - this.margin.top-this.margin.bottom; 
+        this.height = 900 - this.margin.top-this.margin.bottom; 
 
     }
 
@@ -151,7 +151,7 @@ class PowNet {
                 d3.select("#tooltip").transition()
                     .duration(500)
                     .style("opacity", 0)
-            });;
+            });
 
         //make tooltip div
         d3.select(".view1")
