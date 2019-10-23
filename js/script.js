@@ -41,7 +41,10 @@ Promise.all([
             "id": d[""],
             "aLoad": Object.entries(d).slice(1), //.map(f => parseFloat(f[1]), //gets rid of "t1, t2, etc."
             "volt": null,
-            "chSP": null
+            "chSP": null,
+            "x": null,
+            "y": null,
+            "index": i
         });          
     });
 
@@ -65,8 +68,8 @@ Promise.all([
     //Creating link properties and adding in current
     files[3].forEach( (d, i) => {
         powNet.links.push({
-            "source": d.From,
-            "target": d.To,
+            "source": Object.assign({},powNet.nodes.filter(f => f.id == d.From))[0],
+            "target": Object.assign({},powNet.nodes.filter(f => f.id ==d.To))[0],
             "current": Object.entries(d).slice(2),
             "mLC": null,
             "aPF": null
@@ -75,14 +78,15 @@ Promise.all([
 
     //Add maximum line currents to links
     files[4].forEach( (d, i) => {
-        if((d.From == powNet.links[i]['source']) && (d.To == powNet.links[i]['target'])){
+        // console.log(powNet.links[i].target.id);
+        if((d.From == powNet.links[i].source.id) && (d.To == powNet.links[i].target.id)){
             powNet.links[i].mLC = +d.Imax;
         }
     });
 
     //Adding in active power flow
     files[5].forEach( (d, i) => {
-        if ((d.From == powNet.links[i]['source']) && (d.To == powNet.links[i]['target'])){
+        if ((d.From == powNet.links[i].source.id) && (d.To == powNet.links[i].target.id)){
             powNet.links[i].aPF = Object.entries(d).slice(2)
         }
     });
@@ -91,7 +95,7 @@ Promise.all([
     /** TRANSIT SYSTEM DATA 
      * Make nodes and links out of bus stations 
      * Each node will contain which busses are there at which times
-     * maxes separate bus objects w/ time-point data
+     * makes separate bus objects w/ time-point data
      * depending on what those bus object values are at certain times,
      * they'll either be present at the station, or on the links
     */
@@ -158,9 +162,6 @@ Promise.all([
      * Seems like this only needs 1 network visualization then..... idk
      *      
      */
-
-
-
 
 
 

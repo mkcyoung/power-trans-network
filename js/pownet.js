@@ -193,101 +193,81 @@ class PowNet {
             .data(this.data.nodes)
             .enter().append("text");
 
-        //Going to do this with a force-directed graph first
-        var simulation = d3.forceSimulation()
-            .force("link", d3.forceLink().id(function(d) { return d.id; }));
-            // .force("charge", d3.forceManyBody().strength(-25))
-            // .force("center", d3.forceCenter(this.width / 2, this.height / 2));
+        nodes
+            .attr("cx", function (d,i) {
+                let X_Start = 50;
+                // Main branch from n1 to 18
+                if(d.index < 18){
+                    d.x = X_Start + i*10;
+                    return d.x;
+                }
+                //Branch off of 3 containing n23->25
+                if((d.index > 21) & (d.index < 25)){
+                    d.x = X_Start + (i-20)*50;
+                    return d.x;
+                }
+                //Branch off of 2 containing 19 -> 22
+                if((d.index > 17) & (d.index < 22)){
+                    d.x = X_Start + (i-15)*50;
+                    return d.x;
+                }
+                // Bracnh off of 6(may change to 13) containing 26->33
+                if( d.index > 24 ){
+                    d.x = X_Start + (i-23)*50;
+                    return d.x;
+                }
+                else{
+                    return d.x;
+                }
+                
+            })
+            .attr("cy", function (d,i) {
+                // Main branch from n1 to 18
+                let Y_Start = 50;
+                let Y_Spacing = 35;
+                if(d.index < 18){
+                    d.y = Y_Start + i*Y_Spacing;
+                    return d.y;
+                }
+                //Branch off of 3 containing n23->25
+                if ((d.index > 21) & (d.index < 25)){
+                    d.y = Y_Start + 2*Y_Spacing;
+                    return d.y;
+                }
+                //Branch off of 2 containing 19 -> 22
+                if((d.index > 17) & (d.index < 22)){
+                    d.y = Y_Start;
+                    return d.y;
+                }
+                // Branch off of 6 (may change to 13) containing 26->33
+                if(d.index > 24){
+                    d.y = Y_Start + (i-20)*Y_Spacing;
+                    return d.y;
+                }
+                else{
+                    return d.y;
+                }
+            });
 
-        // Feeding data to simulation
-        simulation.nodes(this.data.nodes);
-        simulation.force("link")
-                .links(this.data.links);
+        links
+            .attr("x1", function (d) {
+                return d.source.x;
+            })
+            .attr("y1", function (d) {
+                return d.source.y;
+            })
+            .attr("x2", function (d) {
+                return d.target.x;
+            })
+            .attr("y2", function (d) {
+                return d.target.y;
+            });
 
-        
-        // Finally, let's tell the simulation how to update the graphics
-        simulation.on("tick", function () {
-            // Every "tick" of the simulation will create / update each node's 
-            //  coordinates; we need to use those coordinates to move the lines
-            //  and circles into place
-
-            nodes
-                .attr("cx", function (d,i) {
-                    let X_Start = 50;
-                    // Main branch from n1 to 18
-                    if(d.index < 18){
-                        d.x = X_Start + i*10;
-                        return d.x;
-                    }
-                    //Branch off of 3 containing n23->25
-                    if((d.index > 21) & (d.index < 25)){
-                        d.x = X_Start + (i-20)*50;
-                        return d.x;
-                    }
-                    //Branch off of 2 containing 19 -> 22
-                    if((d.index > 17) & (d.index < 22)){
-                        d.x = X_Start + (i-15)*50;
-                        return d.x;
-                    }
-                    // Bracnh off of 6(may change to 13) containing 26->33
-                    if( d.index > 24 ){
-                        d.x = X_Start + (i-23)*50;
-                        return d.x;
-                    }
-                    else{
-                        return d.x;
-                    }
-                    
-                })
-                .attr("cy", function (d,i) {
-                    // Main branch from n1 to 18
-                    let Y_Start = 50;
-                    let Y_Spacing = 35;
-                    if(d.index < 18){
-                        d.y = Y_Start + i*Y_Spacing;
-                        return d.y;
-                    }
-                    //Branch off of 3 containing n23->25
-                    if ((d.index > 21) & (d.index < 25)){
-                        d.y = Y_Start + 2*Y_Spacing;
-                        return d.y;
-                    }
-                    //Branch off of 2 containing 19 -> 22
-                    if((d.index > 17) & (d.index < 22)){
-                        d.y = Y_Start;
-                        return d.y;
-                    }
-                    // Branch off of 6 (may change to 13) containing 26->33
-                    if(d.index > 24){
-                        d.y = Y_Start + (i-20)*Y_Spacing;
-                        return d.y;
-                    }
-                    else{
-                        return d.y;
-                    }
-                });
-
-            links
-                .attr("x1", function (d) {
-                    return d.source.x;
-                })
-                .attr("y1", function (d) {
-                    return d.source.y;
-                })
-                .attr("x2", function (d) {
-                    return d.target.x;
-                })
-                .attr("y2", function (d) {
-                    return d.target.y;
-                });
-
-            labels
-                .attr("x",d => d.x-20)
-                .attr("y",d => d.y-5)
-                .text( d=> d.index+1)
-                .attr("fill","black");
-        });
-
+        labels
+            .attr("x",d => d.x-20)
+            .attr("y",d => d.y-5)
+            .text( d=> d.index+1)
+            .attr("fill","black");
     }
 
     /**
