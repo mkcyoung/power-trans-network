@@ -39,7 +39,7 @@ Promise.all([
     files[0].forEach( (d, i) => {
         powNet.nodes.push({
             "id": d[""],
-            "aLoad": Object.entries(d).slice(1), //.map(f => parseFloat(f[1]), //gets rid of "t1, t2, etc."
+            "aLoad": d3.entries(d).slice(1), //.map(f => parseFloat(f[1]), //gets rid of "t1, t2, etc."
             "volt": null,
             "chSP": null,
             "x": null,
@@ -51,7 +51,7 @@ Promise.all([
     //Adding voltage to power net object nodes
     files[1].forEach( (d, i) => {
         if (powNet.nodes[i].id == d[""]){
-            powNet.nodes[i].volt = Object.entries(d).slice(1)
+            powNet.nodes[i].volt = d3.entries(d).slice(1)
         }
     });
 
@@ -60,7 +60,7 @@ Promise.all([
     files[2].forEach( (d, i) => {
         powNet.nodes.forEach( (e,j) => {
             if(e.id == stations[i]){
-                e["chSP"] = Object.entries(d).slice(1);
+                e["chSP"] = d3.entries(d).slice(1);
             } 
         })
     });
@@ -70,7 +70,7 @@ Promise.all([
         powNet.links.push({
             "source": Object.assign({},powNet.nodes.filter(f => f.id == d.From))[0],
             "target": Object.assign({},powNet.nodes.filter(f => f.id ==d.To))[0],
-            "current": Object.entries(d).slice(2),
+            "current": d3.entries(d).slice(2),
             "mLC": null,
             "aPF": null
         })          
@@ -87,7 +87,7 @@ Promise.all([
     //Adding in active power flow
     files[5].forEach( (d, i) => {
         if ((d.From == powNet.links[i].source.id) && (d.To == powNet.links[i].target.id)){
-            powNet.links[i].aPF = Object.entries(d).slice(2)
+            powNet.links[i].aPF = d3.entries(d).slice(2)
         }
     });
     console.log("Power Net: ",powNet);
@@ -100,12 +100,6 @@ Promise.all([
      * they'll either be present at the station, or on the links
     */
 
-   // Init object that will contain station data 
-    let transNet = {
-        "nodes":[],
-        "links":[]
-    };
-
     //Init object that will contain bebs
     let bebs = [];
 
@@ -114,7 +108,7 @@ Promise.all([
         bebs.push({
             "id": d[""],
             "BusID": i+1,
-            "energy": Object.entries(d).slice(1),
+            "energy": d3.entries(d).slice(1),
             "power":null,
             "Stations": {},
             "Speeds": {}
@@ -124,7 +118,7 @@ Promise.all([
     //Adding in BEB power
     files[7].forEach( (d, i) => {
         if (bebs[i].id == d[""]){
-            bebs[i].power = Object.entries(d).slice(1)
+            bebs[i].power = d3.entries(d).slice(1)
         }
     });
 
@@ -134,7 +128,7 @@ Promise.all([
     files[8].forEach( (d, i) => {
         bebs.forEach( (c,j) => {
             if (c.BusID == d["BusID"]){
-                c.Stations[d["StationName"]] = Object.entries(d).slice(0,-5)
+                c.Stations[d["StationName"]] = d3.entries(d).slice(0,-5)
             }
         })
     });
@@ -143,13 +137,45 @@ Promise.all([
     files[9].forEach( (d, i) => {
         bebs.forEach( (c,j) => {
             if (c.BusID == d["BusID"]){
-                c.Speeds[d["StationName"]] = Object.entries(d).slice(0,-5)
+                c.Speeds[d["StationName"]] = d3.entries(d).slice(0,-5)
             }
         })
     });
 
     console.log("BEBs",bebs)
 
+    // Create 7 objects corresponding to each station. This will be the trans network I visualize.
+    // Seems pointless to visualize any of the other stops because we have no data about those stops
+    // Encode station circles by how many buses currently there
+
+     // Init object that will contain station data 
+     let transNet = {
+        "nodes":[],
+        "links":[]
+    };
+
+    // Can feed all station presence data in this way -> I'll also throw in node data as well
+     console.log("Experiments with stations: ", files[8].filter(f => f.StationName == "OTTC"));
+
+    let pow_stations = ["n2","n13","n9","n33","n25","n31","n8"];
+    let num_stations = ["1","2","3","4","5","6","7"];
+    let name_stations = ["OTTC","KJTC","CTH","JRPR","KPR","EH","GS"]
+
+
+     //Adding relevant data to 
+     pow_stations.forEach( (d, i) => {
+         transNet.nodes.push({
+             "x":null,
+             "y":null,
+             "StationName": name_stations[i],
+             "StationID":num_stations[i],
+             "StationNode":pow_stations[i],
+             "BusData": files[8].filter(f => f.StationName == name_stations[i]),
+             "chSP": d3.entries(files[2][i]).slice(1) //files[2]
+         })
+     });
+
+     console.log("Trans net: ",transNet.nodes);
 
     /**Questions
      * 1) Max current units, current exceeds that a lot
@@ -162,7 +188,6 @@ Promise.all([
      * Seems like this only needs 1 network visualization then..... idk
      *      
      */
-
 
 
     /** Pass data into PowNet class */

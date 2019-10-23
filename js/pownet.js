@@ -26,33 +26,33 @@ class PowNet {
         let max_aload = d3.max(this.data.nodes.map((d) => {
             //console.log(d)
             return d3.max(d.aLoad.map(f => {
-                //console.log(f[1])
-                return parseFloat(f[1])
+                // console.log(f.value)
+                return parseFloat(f.value)
             }))
         }));
-        //console.log(max_aload)
+        // console.log(max_aload)
         let min_aload = d3.min(this.data.nodes.map((d) => {
             //console.log(d)
             return d3.min(d.aLoad.map(f => {
                 //console.log(f[1])
-                return parseFloat(f[1])
+                return parseFloat(f.value)
             }))
         }));
-        //console.log(min_aload)
+        // console.log(min_aload)
 
         //Finding max/min of voltage
         let max_volt = d3.max(this.data.nodes.map((d) => {
             //console.log(d)
             return d3.max(d.volt.map(f => {
                 //console.log(f[1])
-                return parseFloat(f[1])
+                return parseFloat(f.value)
             }))
         }));
         let min_volt = d3.min(this.data.nodes.map((d) => {
             //console.log(d)
             return d3.min(d.volt.map(f => {
                 //console.log(f[1])
-                return parseFloat(f[1])
+                return parseFloat(f.value)
             }))
         }));
         // console.log(max_volt,min_volt);
@@ -63,32 +63,32 @@ class PowNet {
             if(d.chSP!=null){
             return d3.max(d.chSP.map(f => {
                 //console.log(f[1])
-                return parseFloat(f[1])
+                return parseFloat(f.value)
             }))}
         }));
         let min_chsp = d3.min(this.data.nodes.map((d) => {
-            //console.log(d)
+            // console.log(d)
             if(d.chSP!=null){
             return d3.min(d.chSP.map(f => {
                 //console.log(f[1])
-                return parseFloat(f[1])
+                return parseFloat(f.value)
             }))}
         }));
-        //console.log(max_chsp,min_chsp);
+        // console.log(max_chsp,min_chsp);
 
         //Finding max/min of active power flow
         let max_apf = d3.max(this.data.links.map((d) => {
             //console.log(d)
             return d3.max(d.aPF.map(f => {
                 //console.log(f[1])
-                return parseFloat(f[1])
+                return parseFloat(f.value)
             }))
         }));
         let min_apf = d3.min(this.data.links.map((d) => {
             //console.log(d)
             return d3.min(d.aPF.map(f => {
                 //console.log(f[1])
-                return parseFloat(f[1])
+                return parseFloat(f.value)
             }))
         }));
         // console.log(max_apf,min_apf);
@@ -99,14 +99,14 @@ class PowNet {
             //console.log(d)
             return d3.max(d.current.map(f => {
                 //console.log(f[1])
-                return parseFloat(f[1])
+                return parseFloat(f.value)
             }))
         }));
         let min_current = d3.min(this.data.links.map((d) => {
             //console.log(d)
             return d3.min(d.current.map(f => {
                 //console.log(f[1])
-                return parseFloat(f[1])
+                return parseFloat(f.value)
             }))
         }));
         // console.log(max_current,min_current)
@@ -213,7 +213,7 @@ class PowNet {
                 }
                 // Bracnh off of 6(may change to 13) containing 26->33
                 if( d.index > 24 ){
-                    d.x = X_Start + (i-23)*50;
+                    d.x = X_Start + (i-23)*40;
                     return d.x;
                 }
                 else{
@@ -280,10 +280,10 @@ class PowNet {
         (data.chSP != null) ? text = "<h3> <span>&#9889;</span> Node: " + data.id + "</h3>": 
         text = "<h3> Node: " + data.id + "</h3>";
         //Adds in relevant data
-        text = text + "<p> Active Load: "+ parseFloat(data.aLoad[0][1]).toFixed(2)+" kW</p>";
-        text = text + "<p> Voltage: "+ parseFloat(data.volt[0][1]).toFixed(2)+" kV</p>";
+        text = text + "<p> Active Load: "+ parseFloat(data.aLoad[0].value).toFixed(2)+" kW</p>";
+        text = text + "<p> Voltage: "+ parseFloat(data.volt[0].value).toFixed(2)+" kV</p>";
         if (data.chSP != null){
-            text = text + "<p> Active Power: "+ parseFloat(data.chSP[0][1]).toFixed(2)+" kW</p>"
+            text = text + "<p> Active Power: "+ parseFloat(data.chSP[0].value).toFixed(2)+" kW</p>"
         } 
         return text;
     }
@@ -296,8 +296,8 @@ class PowNet {
     tooltipRenderL(data) {
         let text = "<h3>" + data.source.id + ' <span>&#8594;</span> ' + data.target.id +"</h3>";
         //Adds in relevant data
-        text = text + "<p> Current: "+ parseFloat(data.current[0][1]).toFixed(2)+" A</p>";
-        text = text + "<p> Acitve Power Flow: "+ parseFloat(data.aPF[0][1]).toFixed(2)+" kW</p>";
+        text = text + "<p> Current: "+ parseFloat(data.current[0].value).toFixed(2)+" A</p>";
+        text = text + "<p> Acitve Power Flow: "+ parseFloat(data.aPF[0].value).toFixed(2)+" kW</p>";
         text = text + "<p> Max Line Current: "+ data.mLC.toFixed(2)+" A</p>"
         return text;
     }
