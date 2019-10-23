@@ -205,14 +205,10 @@ class TransNet {
      */
     tooltipRenderN(data) {
         let text = null;
-        (data.chSP != null) ? text = "<h3> <span>&#9889;</span> Node: " + data.id + "</h3>": 
-        text = "<h3> Node: " + data.id + "</h3>";
+        text = "<h3>" + data.StationName + " ("+ data.StationID +")</h3>";
         //Adds in relevant data
-        text = text + "<p> Active Load: "+ parseFloat(data.aLoad[0].value).toFixed(2)+" kW</p>";
-        text = text + "<p> Voltage: "+ parseFloat(data.volt[0].value).toFixed(2)+" kV</p>";
-        if (data.chSP != null){
-            text = text + "<p> Active Power: "+ parseFloat(data.chSP[0].value).toFixed(2)+" kW</p>"
-        } 
+        text = text + "<p> Bus Count: "+ data.BusData[0].total+ " busses</p>";
+        text = text + "<p> Active Power : "+  data.chSP[0].value+" kW</p>";
         return text;
     }
 
