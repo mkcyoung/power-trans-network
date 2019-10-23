@@ -167,9 +167,9 @@ class PowNet {
             .selectAll("circle")
             .data(this.data.nodes)
             .join("circle")
+            .attr("class", d=> (d.chSP!=null) ? "charge "+d.id : "norm")
             .classed("node",true)
             .attr("r", d => (d.chSP!=null) ? 10 : 6)
-            .attr("fill", d=> (d.chSP!=null) ? "#4ccc43" : "orange")
             //tooltip!
             .on("mouseover", function (d) {
                 d3.select("#tooltip").transition()
@@ -177,12 +177,16 @@ class PowNet {
                     .style("opacity", 0.9);
                 d3.select("#tooltip").html(that.tooltipRenderN(d))
                     .style("left", (d3.event.pageX+15) + "px")
-                    .style("top", (d3.event.pageY+15) + "px")
+                    .style("top", (d3.event.pageY+15) + "px");
+                d3.selectAll("."+d.id)
+                    .classed("CHSP",true);
             })
             .on("mouseout", function (d) {
                 d3.select("#tooltip").transition()
                     .duration(500)
-                    .style("opacity", 0)
+                    .style("opacity", 0);
+                d3.selectAll("."+d.id)
+                    .classed("CHSP",false);
             });
         
         //Create labels
@@ -264,7 +268,7 @@ class PowNet {
             });
 
         labels
-            .attr("x",d => d.x-20)
+            .attr("x",d => d.x-30)
             .attr("y",d => d.y-5)
             .text( d=> d.index+1)
             .attr("fill","black");

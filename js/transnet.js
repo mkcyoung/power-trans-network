@@ -32,7 +32,7 @@ class TransNet {
         let links = linkLayer.selectAll("line")
             .data(this.data.links)
             .join("line")
-            .classed("link",true);
+            .classed("linkT",true);
 
         //make tooltip div
         d3.select(".view1")
@@ -48,9 +48,10 @@ class TransNet {
             .selectAll("circle")
             .data(this.data.nodes)
             .join("circle")
+            .attr("class",d => d.StationNode.id)
             .classed("node",true)
-            .attr("r", d => (d.chSP!=null) ? 10 : 6)
-            .attr("fill", d=> (d.chSP!=null) ? "#4ccc43" : "orange")
+            .classed("transNode",true)
+            .attr("r", 15)
             //tooltip!
             .on("mouseover", function (d) {
                 d3.select("#tooltip").transition()
@@ -58,17 +59,21 @@ class TransNet {
                     .style("opacity", 0.9);
                 d3.select("#tooltip").html(that.tooltipRenderN(d))
                     .style("left", (d3.event.pageX+15) + "px")
-                    .style("top", (d3.event.pageY+15) + "px")
+                    .style("top", (d3.event.pageY+15) + "px");
+                d3.selectAll("."+d.StationNode.id)
+                    .classed("CHSP",true);
             })
             .on("mouseout", function (d) {
                 d3.select("#tooltip").transition()
                     .duration(500)
-                    .style("opacity", 0)
+                    .style("opacity", 0);
+                d3.selectAll("."+d.StationNode.id)
+                    .classed("CHSP",false);
             });
         
         //Create labels
         let labelLayer = netGroup.append("g")
-            .attr("class","labels");
+            .attr("class","labelsT");
         let labels = labelLayer
             .selectAll("text")
             .data(this.data.nodes)
@@ -100,29 +105,6 @@ class TransNet {
                         d.x = X_Start -280;
                         return d.x;
                 }
-                // Main branch from n1 to 18
-                // if(d.StationID == 1){
-                //     d.x = X_Start + i*10;
-                //     return d.x;
-                // }
-                // //Branch off of 3 containing n23->25
-                // if(d).StationID == {
-                //     d.x = X_Start + (i-20)*50;
-                //     return d.x;
-                // }
-                // //Branch off of 2 containing 19 -> 22
-                // if((d.index > 17) & (d.index < 22)){
-                //     d.x = X_Start + (i-15)*50;
-                //     return d.x;
-                // }
-                // // Bracnh off of 6(may change to 13) containing 26->33
-                // if( d.index > 24 ){
-                //     d.x = X_Start + (i-23)*40;
-                //     return d.x;
-                // }
-                // else{
-                //     return X_Start;
-                // }
                 
             })
             .attr("cy", function (d,i) {
@@ -150,31 +132,6 @@ class TransNet {
                         d.y = Y_Start -600;
                         return d.y;
                 }
-                // // Main branch from n1 to 18
-                // let Y_Start = 50;
-                // let Y_Spacing = 35;
-                // if(d.index < 18){
-                //     d.y = Y_Start + i*Y_Spacing;
-                //     return d.y;
-                // }
-                // //Branch off of 3 containing n23->25
-                // if ((d.index > 21) & (d.index < 25)){
-                //     d.y = Y_Start + 2*Y_Spacing;
-                //     return d.y;
-                // }
-                // //Branch off of 2 containing 19 -> 22
-                // if((d.index > 17) & (d.index < 22)){
-                //     d.y = Y_Start;
-                //     return d.y;
-                // }
-                // // Branch off of 6 (may change to 13) containing 26->33
-                // if(d.index > 24){
-                //     d.y = Y_Start + (i-20)*Y_Spacing;
-                //     return d.y;
-                // }
-                // else{
-                //     return d.y;
-                // }
             });
 
         links
@@ -192,8 +149,8 @@ class TransNet {
             });
 
         labels
-            .attr("x",d => d.x-20)
-            .attr("y",d => d.y-5)
+            .attr("x",d => d.x-60)
+            .attr("y",d => d.y-10)
             .text( d=> d.StationName)
             .attr("fill","black");
     }
