@@ -79,7 +79,7 @@ class TransNet {
         this.aLoadScale = d3.scaleSequential(d3.interpolatePurples).domain([min_aload,400])
         //Make an ordinal color scale for stations
         let pow_stations = ["n2","n13","n9","n33","n25","n31","n8"];
-        this.stationColor = d3.scaleOrdinal(d3.schemeTableau10).domain(pow_stations);
+        this.stationColor = d3.scaleOrdinal(d3.schemeSet3).domain(pow_stations);
 
 
         let powSVG = d3.select(".view1").select("svg");
@@ -105,11 +105,11 @@ class TransNet {
         this.linkLayer = netGroup.append("g")
             .attr("class", "links");
 
-        //make tooltip div
+        //make Station tooltip div
         d3.select(".view1")
             .append("div")
-            .attr("class", "tooltip")
-            .attr("id","tooltip")
+            .attr("class", "s_tooltip")
+            .attr("id","s_tooltip")
             .style("opacity", 0);
         
         //Create labels
@@ -282,12 +282,12 @@ class TransNet {
             .attr("fill", d => this.stationColor(d.StationNode.id))
             //tooltip!
             .on("mouseover", function (d) {
-                d3.select("#tooltip").transition()
+                d3.select("#s_tooltip").transition()
                     .duration(200)
                     .style("opacity", 1);
-                d3.select("#tooltip").html(that.tooltipRenderN(d))
-                    .style("left", (d3.event.pageX+30) + "px")
-                    .style("top", (d3.event.pageY-80) + "px");
+                d3.select("#s_tooltip").html(that.tooltipRenderS(d))
+                    .style("left","800px") //(d3.event.pageX+30)
+                    .style("top", "175px"); //(d3.event.pageY-80)
                 d3.selectAll("."+d.StationNode.id)
                     .attr("fill", d => { return (d.id != undefined) ? that.stationColor(d.id) : that.stationColor(d.StationNode.id)})
                     .classed("CHSP",true);
@@ -344,7 +344,7 @@ class TransNet {
 
             })
             .on("mouseout", function (d) {
-                d3.select("#tooltip").transition()
+                d3.select("#s_tooltip").transition()
                     .duration(500)
                     .style("opacity", 0);
                 d3.selectAll("."+d.StationNode.id)
@@ -377,10 +377,12 @@ class TransNet {
     tooltipRenderS(data) {
         let that = this;
         let text = null;
-        text = "<h3>" + data.StationName + " ("+ data.StationID +")</h3>";
+        text = "<h3>" + data.StationName + " ("+ data.StationNode.id +")</h3>";
         //Adds in relevant data
         text = text + "<p> BEB Count: "+ data.BusData[that.activeTime].total+ " busses</p>";
         text = text + "<p> Active Power : "+  parseFloat(data.chSP[that.activeTime].value).toFixed(2)+" kW</p>";
+        text = text + "<p> Active Load : "+  parseFloat(data.aLoad[that.activeTime].value).toFixed(2)+" kW</p>";
+        text = text + "<p> Voltage : "+  parseFloat(data.volt[that.activeTime].value).toFixed(2)+" kV</p>";
         return text;
     }
 

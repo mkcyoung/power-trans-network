@@ -121,11 +121,11 @@ class PowNet {
         this.voltScale = d3.scaleSqrt().range([8,15]).domain([min_volt,max_volt]);
         this.powLoadScale = d3.scaleSequential(d3.interpolateOranges).domain([min_chsp,max_chsp]);
 
-        this.currentScale = d3.scaleLinear().range([0,0]).domain([min_current,max_current]);
-        this.apfscale = d3.scaleLinear().range([0,0]).domain([min_apf,max_apf]);
+        this.currentScale = d3.scaleLinear().range([3,10]).domain([min_current,max_current]);
+        this.apfscale = d3.scaleSequential(d3.interpolateBlues).domain([min_apf,max_apf]);
         //Make an ordinal color scale for stations
         let pow_stations = ["n2","n13","n9","n33","n25","n31","n8"];
-        this.stationColor = d3.scaleOrdinal(d3.schemeTableau10).domain(pow_stations);
+        this.stationColor = d3.scaleOrdinal(d3.schemeSet3).domain(pow_stations);
 
 
         //Select view1 and append an svg to it
@@ -169,6 +169,8 @@ class PowNet {
             .data(this.data.links)
             .join("line")
             .classed("link",true)
+            .attr("stroke-width",d=>this.currentScale(d.current[this.activeTime].value))
+            .attr("stroke",d=>this.apfscale(d.aPF[this.activeTime].value))
             //tooltip!
             .on("mouseover", function (d) {
                 d3.select("#tooltip").transition()

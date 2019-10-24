@@ -16,7 +16,7 @@
 
 .masthead{
     grid-area: title;
-    background: rgb(192, 250, 192);
+    background: rgb(190, 190, 190);
     font-size: 50px;
     text-align: center;
     font-weight: lighter;
@@ -38,24 +38,24 @@
     stroke-width: 1px;
 }
 .station_node:hover{
-    stroke-width: 4px;
+    stroke-width: 5px;
     filter: saturate(300%);
 }
 .node:hover{
-    stroke-width: 3px;
+    stroke-width: 5px;
     filter: saturate(300%);
 }
 .links{
-    stroke: rgb(90, 90, 90);
+    /* stroke: rgb(90, 90, 90); */
     stroke-width: 2px;
 }
 .linkT{
     stroke:rgb(90, 90, 90);
-    stroke-width: 2px;
+    stroke-width: 1px;
 }
 .link:hover{
     stroke: rgb(251, 255, 14);
-    stroke-width: 4px;
+    stroke-width: 18px;
 }
 .labels{
     font-size: 15px;
@@ -96,6 +96,7 @@
     font-family: "Avenir Next";
 }
 
+
 .tooltip h3{
     margin: auto;
     font-size: 24px;
@@ -106,6 +107,33 @@
 .tooltip p{
     margin: auto;
     font-size: 15px;
+    font-weight: bolder;
+    color: #81849a;
+}
+
+.s_tooltip{
+    position: absolute;
+    text-align: right;
+    width: auto;
+    height: auto;
+    padding: 2px;
+    background: rgba(255, 255, 255, 0.8);
+    stroke: gray;
+    border-radius: 2px;
+    pointer-events: none;
+    font-family: "Avenir Next";
+}
+
+.s_tooltip h3{
+    margin: auto;
+    font-size: 40px;
+    font-weight:bolder;
+    color: #484b5a;
+}
+
+.s_tooltip p{
+    margin: auto;
+    font-size: 20px;
     font-weight: bolder;
     color: #81849a;
 }
