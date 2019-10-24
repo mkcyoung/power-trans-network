@@ -20,15 +20,34 @@ class TransNet {
         //Select view1 and append an svg to it
         let that = this;
 
+
         //Make an ordinal color scale for stations
         let pow_stations = ["n2","n13","n9","n33","n25","n31","n8"];
-        this.stationColor = d3.scaleOrdinal(d3.schemeSet3).domain(pow_stations);
+        this.stationColor = d3.scaleOrdinal(d3.schemeTableau10).domain(pow_stations);
 
 
         let powSVG = d3.select(".view1").select("svg");
 
+        /** Charging station interface */
+        let CSGroup = powSVG.append("g")
+            .attr("transform","translate("+(this.width/2-70)+","+this.margin.top+")");
+
         let netGroup = powSVG.append("g")
             .attr("transform","translate("+(this.width/2 + 60)+","+this.margin.top+")");
+
+
+       // Create 7 nodes representing each station
+       this.stations = CSGroup.append("g")
+           .attr("class", "csgroup");
+
+        //I'll creat lines first so they're beneath everything
+        this.lineLayer = this.stations.append("g")
+            .attr("class","netlines");
+        
+        this.path = this.lineLayer.append("path")
+            .attr("stroke","black")
+            .attr("stroke-width",0.5)
+            .attr("fill","none");
 
         // First we create the links in their own group that comes before the node 
         //  group (so the circles will always be on top of the lines)
@@ -50,14 +69,6 @@ class TransNet {
         this.nodeLayer = netGroup.append("g")
             .attr("class", "nodes");
 
-
-         /** Charging station interface */
-         let CSGroup = powSVG.append("g")
-         .attr("transform","translate("+(this.width/2-70)+","+this.margin.top+")");
-
-        // Create 7 nodes representing each station
-        this.stations = CSGroup.append("g")
-            .attr("class", "csgroup");
       
     }
 
@@ -179,8 +190,31 @@ class TransNet {
             .text( d=> d.StationName)
             .attr("fill","black");
 
+        // Creating lines that will connect the nodes 
+        this.lineOTTC = [{"x":20,"y":50},{"x":80,"y":50},
+        {"x":80,"y":645},{"x":413,"y":645}];
 
-        // Now let's create the lines
+        this.lineKJTC = [{"x":20,"y":145},{"x":80,"y":145},
+        {"x":80,"y":245},{"x":235,"y":245}];
+
+        this.lineCTH = [{"x":20,"y":240},{"x":200,"y":240},
+        {"x":200,"y":350},{"x":310,"y":350},
+        {"x":310,"y":389}];
+
+        this.lineJRPR = [{"x":20,"y":335},{"x":150,"y":335},
+        {"x":150,"y":60}];
+        
+        this.lineKPR = [{"x":20,"y":430},{"x":200,"y":430},
+        {"x":200,"y":550},{"x":480,"y":550},
+        {"x":480,"y":360}];
+
+        this.lineEH = [{"x":20,"y":525},{"x":175,"y":525},
+        {"x":175,"y":145},{"x":210,"y":145}];
+
+        this.lineGS = [{"x":20,"y":620},{"x":270,"y":620},
+        {"x":270,"y":410}];
+
+        // Now let's create Station node area
         let station_nodes = this.stations.selectAll("circle")
             .data(this.data.nodes) //I want this to contain everything relevant to the stations
             .join("circle")
@@ -196,11 +230,58 @@ class TransNet {
                     .duration(200)
                     .style("opacity", 0.9);
                 d3.select("#tooltip").html(that.tooltipRenderN(d))
-                    .style("left", (d3.event.pageX+15) + "px")
-                    .style("top", (d3.event.pageY+15) + "px");
+                    .style("left", (d3.event.pageX+30) + "px")
+                    .style("top", (d3.event.pageY-80) + "px");
                 d3.selectAll("."+d.StationNode.id)
                     .attr("fill", d => { return (d.id != undefined) ? that.stationColor(d.id) : that.stationColor(d.StationNode.id)})
                     .classed("CHSP",true);
+                //Creating lines that connect node to power station
+                let lineFunction = d3.line()
+                    .x(function(d){
+                        return d.x;
+                    })
+                    .y(function(d){
+                        return d.y;
+                    });
+                
+                let line_data = null;
+                console.log(d)
+                switch(parseInt(d.StationID)){
+                    case 1:
+                       line_data = that.lineOTTC;
+                       break;
+                    case 2:
+                        line_data = that.lineKJTC;
+                        break;
+                    case 3:
+                        line_data = that.lineCTH;
+                        break;
+                    case 4:
+                        line_data = that.lineJRPR;
+                        break;
+                    case 5:
+                        line_data = that.lineKPR;
+                        break;
+                    case 6:
+                        line_data = that.lineEH;
+                        break;
+                    case 7:
+                        line_data = that.lineGS;
+                        break;
+                }
+
+                that.path
+                    .attr("d",lineFunction(line_data));
+
+                let totalLength = that.path.node().getTotalLength();
+
+                that.path
+                    .attr("stroke-dasharray",totalLength + " " +totalLength)
+                    .attr("stroke-dashoffset",totalLength)
+                    .transition()
+                    .duration(600)
+                    .attr("stroke-dashoffset",0);
+
             })
             .on("mouseout", function (d) {
                 d3.select("#tooltip").transition()
