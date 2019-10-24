@@ -34,10 +34,28 @@ class TransNet {
         }));
         //console.log(max_bus_count,min_bus_count);
 
+        //Finding max/min of CHSP
+        let max_chsp = d3.max(this.data.nodes.map((d) => {
+            //console.log(d)
+            if(d.chSP!=null){
+            return d3.max(d.chSP.map(f => {
+                //console.log(f[1])
+                return parseFloat(f.value)
+            }))}
+        }));
+        let min_chsp = d3.min(this.data.nodes.map((d) => {
+            // console.log(d)
+            if(d.chSP!=null){
+            return d3.min(d.chSP.map(f => {
+                //console.log(f[1])
+                return parseFloat(f.value)
+            }))}
+        }));
+
+        /** Set Scales  */
         //Make circle size scale for bus count
         this.buscountScale = d3.scaleSqrt().domain([min_bus_count,max_bus_count]).range([7,22])
-
-
+        this.powLoadScale = d3.scaleSequential(d3.interpolateViridis).domain([min_chsp,max_chsp])
         //Make an ordinal color scale for stations
         let pow_stations = ["n2","n13","n9","n33","n25","n31","n8"];
         this.stationColor = d3.scaleOrdinal(d3.schemeTableau10).domain(pow_stations);
@@ -101,7 +119,7 @@ class TransNet {
             .classed("node",true)
             .classed("transNode",true)
             .attr("r", d => this.buscountScale(d.BusData[0].total))
-            .attr("fill","rgb(0, 153, 255)")
+            .attr("fill", d => this.powLoadScale(d.chSP[0].value))
             //tooltip!
             .on("mouseover", function (d) {
                 d3.select("#tooltip").transition()
@@ -304,7 +322,7 @@ class TransNet {
                     .duration(500)
                     .style("opacity", 0);
                 d3.selectAll("."+d.StationNode.id)
-                    .attr("fill", d => { return (d.id != undefined) ? "rgb(0, 153, 255)" : "rgb(0, 153, 255)"})
+                    .attr("fill", d => { return (d.id != undefined) ? "rgb(0, 153, 255)" : that.powLoadScale(d.chSP[0].value)})
                     .classed("CHSP",false);
                 d3.selectAll(".station_node")
                     .attr("fill", d => that.stationColor(d.StationNode.id));
