@@ -6,6 +6,7 @@ class TransNet {
         //Assigning data variable
         //console.log(data)
         this.data = data;
+        this.activeTime = 50;
 
         //Margins - the bostock way
         this.margin = {top: 20, right: 20, bottom: 20, left: 20};
@@ -118,8 +119,8 @@ class TransNet {
             .attr("class",d => d.StationNode.id)
             .classed("node",true)
             .classed("transNode",true)
-            .attr("r", d => this.buscountScale(d.BusData[0].total))
-            .attr("fill", d => this.powLoadScale(d.chSP[0].value))
+            .attr("r", d => this.buscountScale(d.BusData[this.activeTime].total))
+            .attr("fill", d => this.powLoadScale(d.chSP[this.activeTime].value))
             //tooltip!
             .on("mouseover", function (d) {
                 d3.select("#tooltip").transition()
@@ -322,7 +323,7 @@ class TransNet {
                     .duration(500)
                     .style("opacity", 0);
                 d3.selectAll("."+d.StationNode.id)
-                    .attr("fill", d => { return (d.id != undefined) ? "rgb(0, 153, 255)" : that.powLoadScale(d.chSP[0].value)})
+                    .attr("fill", d => { return (d.id != undefined) ? "rgb(0, 153, 255)" : that.powLoadScale(d.chSP[that.activeTime].value)})
                     .classed("CHSP",false);
                 d3.selectAll(".station_node")
                     .attr("fill", d => that.stationColor(d.StationNode.id));
@@ -339,20 +340,22 @@ class TransNet {
      * @returns {string}
      */
     tooltipRenderN(data) {
+        let that = this;
         let text = null;
         text = "<h3>" + data.StationName + " ("+ data.StationID +")</h3>";
         //Adds in relevant data
-        text = text + "<p> BEB Count: "+ data.BusData[0].total+ " busses</p>";
-        text = text + "<p> Active Power : "+  data.chSP[0].value+" kW</p>";
+        text = text + "<p> BEB Count: "+ data.BusData[that.activeTime].total+ " busses</p>";
+        text = text + "<p> Active Power : "+  parseFloat(data.chSP[that.activeTime].value).toFixed(2)+" kW</p>";
         return text;
     }
 
     tooltipRenderS(data) {
+        let that = this;
         let text = null;
         text = "<h3>" + data.StationName + " ("+ data.StationID +")</h3>";
         //Adds in relevant data
-        text = text + "<p> BEB Count: "+ data.BusData[0].total+ " busses</p>";
-        text = text + "<p> Active Power : "+  data.chSP[0].value+" kW</p>";
+        text = text + "<p> BEB Count: "+ data.BusData[that.activeTime].total+ " busses</p>";
+        text = text + "<p> Active Power : "+  parseFloat(data.chSP[that.activeTime].value).toFixed(2)+" kW</p>";
         return text;
     }
 

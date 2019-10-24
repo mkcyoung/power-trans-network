@@ -5,6 +5,7 @@ class PowNet {
     constructor(data){
         //Assigning data variable
         this.data = data;
+        this.activeTime = 50;
 
         //Margins - the bostock way
         this.margin = {top: 20, right: 20, bottom: 20, left: 20};
@@ -131,10 +132,34 @@ class PowNet {
 
         // First we create the links in their own group that comes before the node 
         //  group (so the circles will always be on top of the lines)
-        let linkLayer = netGroup.append("g")
+        this.linkLayer = netGroup.append("g")
             .attr("class", "links");
-         // Now let's create the lines
-        let links = linkLayer.selectAll("line")
+         
+
+        //make tooltip div
+        d3.select(".view1")
+            .append("div")
+            .attr("class", "tooltip")
+            .attr("id","tooltip")
+            .style("opacity", 0);
+
+        // Now we create the node group, and the nodes inside it
+        this.nodeLayer = netGroup.append("g")
+            .attr("class", "nodes");
+       
+        
+        //Create labels
+        this.labelLayer = netGroup.append("g")
+            .attr("class","labels");
+
+
+
+    }
+
+    updateNet(){
+        let that = this;
+        // Now let's create the lines
+        let links = this.linkLayer.selectAll("line")
             .data(this.data.links)
             .join("line")
             .classed("link",true)
@@ -153,17 +178,7 @@ class PowNet {
                     .style("opacity", 0)
             });
 
-        //make tooltip div
-        d3.select(".view1")
-            .append("div")
-            .attr("class", "tooltip")
-            .attr("id","tooltip")
-            .style("opacity", 0);
-
-        // Now we create the node group, and the nodes inside it
-        let nodeLayer = netGroup.append("g")
-            .attr("class", "nodes");
-        let nodes = nodeLayer
+        let nodes = this.nodeLayer
             .selectAll("circle")
             .data(this.data.nodes)
             .join("circle")
@@ -189,11 +204,9 @@ class PowNet {
                 d3.selectAll("."+d.id)
                     .classed("CHSP",false);
             });
+
         
-        //Create labels
-        let labelLayer = netGroup.append("g")
-            .attr("class","labels");
-        let labels = labelLayer
+        let labels = this.labelLayer
             .selectAll("text")
             .data(this.data.nodes)
             .enter().append("text");
@@ -273,10 +286,8 @@ class PowNet {
             .attr("y",d => d.y-5)
             .text( d=> d.index+1)
             .attr("fill","black");
-
-
+        
     }
-
 
 
     /**
