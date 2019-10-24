@@ -20,6 +20,23 @@ class TransNet {
         //Select view1 and append an svg to it
         let that = this;
 
+        //Create bus count scale
+        //Finding max/min of aLoad
+        let max_bus_count = d3.max(this.data.nodes.map((d) => {
+            return d3.max(d.BusData.map((d)=>{
+                return d.total
+            }))
+        }));
+        let min_bus_count = d3.min(this.data.nodes.map((d) => {
+           return d3.min(d.BusData.map((d)=>{
+               return d.total
+           }))
+        }));
+        //console.log(max_bus_count,min_bus_count);
+
+        //Make circle size scale for bus count
+        this.buscountScale = d3.scaleSqrt().domain([min_bus_count,max_bus_count]).range([7,22])
+
 
         //Make an ordinal color scale for stations
         let pow_stations = ["n2","n13","n9","n33","n25","n31","n8"];
@@ -43,11 +60,6 @@ class TransNet {
         //I'll creat lines first so they're beneath everything
         this.lineLayer = this.stations.append("g")
             .attr("class","netlines");
-        
-        this.path = this.lineLayer.append("path")
-            .attr("stroke","black")
-            .attr("stroke-width",0.5)
-            .attr("fill","none");
 
         // First we create the links in their own group that comes before the node 
         //  group (so the circles will always be on top of the lines)
@@ -88,7 +100,7 @@ class TransNet {
             .attr("class",d => d.StationNode.id)
             .classed("node",true)
             .classed("transNode",true)
-            .attr("r", 15)
+            .attr("r", d => this.buscountScale(d.BusData[0].total))
             .attr("fill","rgb(0, 153, 255)")
             //tooltip!
             .on("mouseover", function (d) {
@@ -190,7 +202,7 @@ class TransNet {
             .text( d=> d.StationName)
             .attr("fill","black");
 
-        // Creating lines that will connect the nodes 
+        // Creating lines that will connect the trans nodes 
         this.lineOTTC = [{"x":20,"y":50},{"x":80,"y":50},
         {"x":80,"y":645},{"x":413,"y":645}];
 
@@ -228,7 +240,7 @@ class TransNet {
             .on("mouseover", function (d) {
                 d3.select("#tooltip").transition()
                     .duration(200)
-                    .style("opacity", 0.9);
+                    .style("opacity", 1);
                 d3.select("#tooltip").html(that.tooltipRenderN(d))
                     .style("left", (d3.event.pageX+30) + "px")
                     .style("top", (d3.event.pageY-80) + "px");
@@ -245,7 +257,7 @@ class TransNet {
                     });
                 
                 let line_data = null;
-                console.log(d)
+                
                 switch(parseInt(d.StationID)){
                     case 1:
                        line_data = that.lineOTTC;
@@ -270,16 +282,20 @@ class TransNet {
                         break;
                 }
 
-                that.path
+                let path = that.lineLayer.append("path")
+                    .attr("class","netline")
+                    .attr("stroke","black")
+                    .attr("stroke-width",0.5)
+                    .attr("fill","none")
                     .attr("d",lineFunction(line_data));
 
-                let totalLength = that.path.node().getTotalLength();
+                let totalLength = path.node().getTotalLength();
 
-                that.path
+                path
                     .attr("stroke-dasharray",totalLength + " " +totalLength)
                     .attr("stroke-dashoffset",totalLength)
                     .transition()
-                    .duration(600)
+                    .duration(1000)
                     .attr("stroke-dashoffset",0);
 
             })
@@ -292,6 +308,9 @@ class TransNet {
                     .classed("CHSP",false);
                 d3.selectAll(".station_node")
                     .attr("fill", d => that.stationColor(d.StationNode.id));
+
+                d3.selectAll(".netline").remove();
+
             });
 
     }
@@ -302,6 +321,15 @@ class TransNet {
      * @returns {string}
      */
     tooltipRenderN(data) {
+        let text = null;
+        text = "<h3>" + data.StationName + " ("+ data.StationID +")</h3>";
+        //Adds in relevant data
+        text = text + "<p> BEB Count: "+ data.BusData[0].total+ " busses</p>";
+        text = text + "<p> Active Power : "+  data.chSP[0].value+" kW</p>";
+        return text;
+    }
+
+    tooltipRenderS(data) {
         let text = null;
         text = "<h3>" + data.StationName + " ("+ data.StationID +")</h3>";
         //Adds in relevant data
