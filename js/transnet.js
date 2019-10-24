@@ -53,10 +53,30 @@ class TransNet {
             }))}
         }));
 
+        //Finding max/min of aLoad
+        let max_aload = d3.max(this.data.nodes.map((d) => {
+            //console.log(d)
+            return d3.max(d.aLoad.map(f => {
+                // console.log(f.value)
+                return parseFloat(f.value)
+            }))
+        }));
+        // console.log(max_aload)
+        let min_aload = d3.min(this.data.nodes.map((d) => {
+            //console.log(d)
+            return d3.min(d.aLoad.map(f => {
+                //console.log(f[1])
+                return parseFloat(f.value)
+            }))
+        }));
+        
+
         /** Set Scales  */
         //Make circle size scale for bus count
-        this.buscountScale = d3.scaleSqrt().domain([min_bus_count,max_bus_count]).range([7,22])
-        this.powLoadScale = d3.scaleSequential(d3.interpolateViridis).domain([min_chsp,max_chsp])
+        this.buscountScale = d3.scaleSqrt().domain([min_bus_count,max_bus_count]).range([7,22]);
+        this.powLoadScale = d3.scaleSequential(d3.interpolateOranges).domain([min_chsp,max_chsp]);
+        //Setting custom max because the first node skews it - have this for color setting
+        this.aLoadScale = d3.scaleSequential(d3.interpolatePurples).domain([min_aload,400])
         //Make an ordinal color scale for stations
         let pow_stations = ["n2","n13","n9","n33","n25","n31","n8"];
         this.stationColor = d3.scaleOrdinal(d3.schemeTableau10).domain(pow_stations);
@@ -130,14 +150,19 @@ class TransNet {
                     .style("left", (d3.event.pageX+15) + "px")
                     .style("top", (d3.event.pageY+15) + "px");
                 d3.selectAll("."+d.StationNode.id)
+                    .attr("fill", d => { return (d.id != undefined) ? that.stationColor(d.id) : that.stationColor(d.StationNode.id)})
                     .classed("CHSP",true);
+                    
             })
             .on("mouseout", function (d) {
                 d3.select("#tooltip").transition()
                     .duration(500)
                     .style("opacity", 0);
                 d3.selectAll("."+d.StationNode.id)
+                    .attr("fill", d => { return (d.id != undefined) ? that.aLoadScale(d.aLoad[that.activeTime].value) : that.powLoadScale(d.chSP[that.activeTime].value)})
                     .classed("CHSP",false);
+                d3.selectAll(".station_node")
+                    .attr("fill", d => that.stationColor(d.StationNode.id));
             });
         
 
@@ -323,7 +348,7 @@ class TransNet {
                     .duration(500)
                     .style("opacity", 0);
                 d3.selectAll("."+d.StationNode.id)
-                    .attr("fill", d => { return (d.id != undefined) ? "rgb(0, 153, 255)" : that.powLoadScale(d.chSP[that.activeTime].value)})
+                    .attr("fill", d => { return (d.id != undefined) ? that.aLoadScale(d.aLoad[that.activeTime].value) : that.powLoadScale(d.chSP[that.activeTime].value)})
                     .classed("CHSP",false);
                 d3.selectAll(".station_node")
                     .attr("fill", d => that.stationColor(d.StationNode.id));

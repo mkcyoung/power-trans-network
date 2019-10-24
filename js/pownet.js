@@ -114,12 +114,18 @@ class PowNet {
 
         //Creating scales
         //TODO set ranges
-        this.aLoadScale = d3.scaleLinear().range([0,0]).domain([min_aload,max_aload]);
-        this.voltScale = d3.scaleLinear().range([0,0]).domain([min_volt,max_volt]);
-        this.chspScale = d3.scaleLinear().range([0,0]).domain([min_chsp,max_chsp]);
+
+        //this.aLoadScale = d3.scaleSqrt().range([8,20]).domain([min_aload,max_aload]);
+        //The first node has an insanely high max, so for the interest of the scale I'm gonna manually set ot
+        this.aLoadScale = d3.scaleSequential(d3.interpolatePurples).domain([min_aload,400])
+        this.voltScale = d3.scaleSqrt().range([8,15]).domain([min_volt,max_volt]);
+        this.powLoadScale = d3.scaleSequential(d3.interpolateOranges).domain([min_chsp,max_chsp]);
 
         this.currentScale = d3.scaleLinear().range([0,0]).domain([min_current,max_current]);
         this.apfscale = d3.scaleLinear().range([0,0]).domain([min_apf,max_apf]);
+        //Make an ordinal color scale for stations
+        let pow_stations = ["n2","n13","n9","n33","n25","n31","n8"];
+        this.stationColor = d3.scaleOrdinal(d3.schemeTableau10).domain(pow_stations);
 
 
         //Select view1 and append an svg to it
@@ -184,8 +190,8 @@ class PowNet {
             .join("circle")
             .attr("class", d=> (d.chSP!=null) ? "charge "+d.id : "norm")
             .classed("node",true)
-            .attr("r", d => (d.chSP!=null) ? 10 : 6)
-            .attr("fill","rgb(0, 153, 255)")
+            .attr("r", d => this.voltScale(d.volt[this.activeTime].value))
+            .attr("fill",d => this.aLoadScale(d.aLoad[this.activeTime].value))
             //tooltip!
             .on("mouseover", function (d) {
                 d3.select("#tooltip").transition()
@@ -195,6 +201,7 @@ class PowNet {
                     .style("left", (d3.event.pageX+15) + "px")
                     .style("top", (d3.event.pageY+15) + "px");
                 d3.selectAll("."+d.id)
+                    .attr("fill", d => { return (d.id != undefined) ? that.stationColor(d.id) : that.stationColor(d.StationNode.id)})
                     .classed("CHSP",true);
             })
             .on("mouseout", function (d) {
@@ -202,7 +209,10 @@ class PowNet {
                     .duration(500)
                     .style("opacity", 0);
                 d3.selectAll("."+d.id)
+                    .attr("fill", d => { return (d.id != undefined) ? that.aLoadScale(d.aLoad[that.activeTime].value) : that.powLoadScale(d.chSP[that.activeTime].value)})
                     .classed("CHSP",false);
+                d3.selectAll(".station_node")
+                    .attr("fill", d => that.stationColor(d.StationNode.id));
             });
 
         
@@ -296,14 +306,15 @@ class PowNet {
      * @returns {string}
      */
     tooltipRenderN(data) {
+        let that = this;
         let text = null;
         (data.chSP != null) ? text = "<h3> <span>&#9889;</span> Node: " + data.id + "</h3>": 
         text = "<h3> Node: " + data.id + "</h3>";
         //Adds in relevant data
-        text = text + "<p> Active Load: "+ parseFloat(data.aLoad[0].value).toFixed(2)+" kW</p>";
-        text = text + "<p> Voltage: "+ parseFloat(data.volt[0].value).toFixed(2)+" kV</p>";
+        text = text + "<p> Active Load: "+ parseFloat(data.aLoad[that.activeTime].value).toFixed(2)+" kW</p>";
+        text = text + "<p> Voltage: "+ parseFloat(data.volt[that.activeTime].value).toFixed(2)+" kV</p>";
         if (data.chSP != null){
-            text = text + "<p> Active Power: "+ parseFloat(data.chSP[0].value).toFixed(2)+" kW</p>"
+            text = text + "<p> Active Power: "+ parseFloat(data.chSP[that.activeTime].value).toFixed(2)+" kW</p>"
         } 
         return text;
     }
@@ -314,10 +325,11 @@ class PowNet {
      * @returns {string}
      */
     tooltipRenderL(data) {
+        let that = this;
         let text = "<h3>" + data.source.id + ' <span>&#8594;</span> ' + data.target.id +"</h3>";
         //Adds in relevant data
-        text = text + "<p> Current: "+ parseFloat(data.current[0].value).toFixed(2)+" A</p>";
-        text = text + "<p> Acitve Power Flow: "+ parseFloat(data.aPF[0].value).toFixed(2)+" kW</p>";
+        text = text + "<p> Current: "+ parseFloat(data.current[that.activeTime].value).toFixed(2)+" A</p>";
+        text = text + "<p> Acitve Power Flow: "+ parseFloat(data.aPF[that.activeTime].value).toFixed(2)+" kW</p>";
         text = text + "<p> Max Line Current: "+ data.mLC.toFixed(2)+" A</p>"
         return text;
     }
