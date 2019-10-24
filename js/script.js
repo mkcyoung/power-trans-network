@@ -238,5 +238,6 @@ Promise.all([
     /** Pass data into TransNet class */
     let transNetwork = new TransNet(transNet);
     transNetwork.createNet();
+    transNetwork.updateNet();
 
 });

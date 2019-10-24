@@ -4,7 +4,7 @@ class TransNet {
     // Creates a Power Network object
     constructor(data){
         //Assigning data variable
-        console.log(data)
+        //console.log(data)
         this.data = data;
 
         //Margins - the bostock way
@@ -26,13 +26,8 @@ class TransNet {
 
         // First we create the links in their own group that comes before the node 
         //  group (so the circles will always be on top of the lines)
-        let linkLayer = netGroup.append("g")
+        this.linkLayer = netGroup.append("g")
             .attr("class", "links");
-         // Now let's create the lines
-        let links = linkLayer.selectAll("line")
-            .data(this.data.links)
-            .join("line")
-            .classed("linkT",true);
 
         //make tooltip div
         d3.select(".view1")
@@ -40,11 +35,27 @@ class TransNet {
             .attr("class", "tooltip")
             .attr("id","tooltip")
             .style("opacity", 0);
+        
+        //Create labels
+        this.labelLayer = netGroup.append("g")
+        .attr("class","labelsT");
 
         // Now we create the node group, and the nodes inside it
-        let nodeLayer = netGroup.append("g")
+        this.nodeLayer = netGroup.append("g")
             .attr("class", "nodes");
-        let nodes = nodeLayer
+    
+    }
+
+    updateNet(){
+        let that = this;
+        // Now let's create the lines
+        let links = this.linkLayer.selectAll("line")
+            .data(this.data.links)
+            .join("line")
+            .classed("linkT",true);
+
+
+        let nodes = this.nodeLayer
             .selectAll("circle")
             .data(this.data.nodes)
             .join("circle")
@@ -71,10 +82,8 @@ class TransNet {
                     .classed("CHSP",false);
             });
         
-        //Create labels
-        let labelLayer = netGroup.append("g")
-            .attr("class","labelsT");
-        let labels = labelLayer
+
+        let labels = this.labelLayer
             .selectAll("text")
             .data(this.data.nodes)
             .enter().append("text");
@@ -164,7 +173,7 @@ class TransNet {
         let text = null;
         text = "<h3>" + data.StationName + " ("+ data.StationID +")</h3>";
         //Adds in relevant data
-        text = text + "<p> Bus Count: "+ data.BusData[0].total+ " busses</p>";
+        text = text + "<p> BEB Count: "+ data.BusData[0].total+ " busses</p>";
         text = text + "<p> Active Power : "+  data.chSP[0].value+" kW</p>";
         return text;
     }
