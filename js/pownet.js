@@ -170,6 +170,7 @@ class PowNet {
             .attr("class", d=> (d.chSP!=null) ? "charge "+d.id : "norm")
             .classed("node",true)
             .attr("r", d => (d.chSP!=null) ? 10 : 6)
+            .attr("fill","rgb(0, 153, 255)")
             //tooltip!
             .on("mouseover", function (d) {
                 d3.select("#tooltip").transition()
@@ -272,19 +273,6 @@ class PowNet {
             .attr("y",d => d.y-5)
             .text( d=> d.index+1)
             .attr("fill","black");
-
-
-        /** Charging station interface */
-        let CSGroup = powSVG.append("g")
-            .attr("transform","translate("+(this.width/2-50)+","+this.margin.top+")");
-
-        // Create 7 nodes representing each station
-        let stations = CSGroup.append("g")
-            .attr("class", "csgroup");
-         // Now let's create the lines
-        let station_nodes = stations.selectAll("circle")
-            .data(this.data) //I want this to contain everything relevant to the stations
-            .join("circle");
 
 
     }

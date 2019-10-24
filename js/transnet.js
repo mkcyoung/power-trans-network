@@ -19,6 +19,12 @@ class TransNet {
         //console.log("In trans net");
         //Select view1 and append an svg to it
         let that = this;
+
+        //Make an ordinal color scale for stations
+        let pow_stations = ["n2","n13","n9","n33","n25","n31","n8"];
+        this.stationColor = d3.scaleOrdinal(d3.schemeSet3).domain(pow_stations);
+
+
         let powSVG = d3.select(".view1").select("svg");
 
         let netGroup = powSVG.append("g")
@@ -43,7 +49,16 @@ class TransNet {
         // Now we create the node group, and the nodes inside it
         this.nodeLayer = netGroup.append("g")
             .attr("class", "nodes");
-    
+
+
+         /** Charging station interface */
+         let CSGroup = powSVG.append("g")
+         .attr("transform","translate("+(this.width/2-70)+","+this.margin.top+")");
+
+        // Create 7 nodes representing each station
+        this.stations = CSGroup.append("g")
+            .attr("class", "csgroup");
+      
     }
 
     updateNet(){
@@ -63,6 +78,7 @@ class TransNet {
             .classed("node",true)
             .classed("transNode",true)
             .attr("r", 15)
+            .attr("fill","rgb(0, 153, 255)")
             //tooltip!
             .on("mouseover", function (d) {
                 d3.select("#tooltip").transition()
@@ -162,6 +178,41 @@ class TransNet {
             .attr("y",d => d.y-10)
             .text( d=> d.StationName)
             .attr("fill","black");
+
+
+        // Now let's create the lines
+        let station_nodes = this.stations.selectAll("circle")
+            .data(this.data.nodes) //I want this to contain everything relevant to the stations
+            .join("circle")
+            .attr("cx", 20)
+            .attr("cy", (d,i) => 50 + i*95)
+            .attr("class", d => d.StationNode.id)
+            .classed("station_node",true)
+            .attr("r", 25)
+            .attr("fill", d => this.stationColor(d.StationNode.id))
+            //tooltip!
+            .on("mouseover", function (d) {
+                d3.select("#tooltip").transition()
+                    .duration(200)
+                    .style("opacity", 0.9);
+                d3.select("#tooltip").html(that.tooltipRenderN(d))
+                    .style("left", (d3.event.pageX+15) + "px")
+                    .style("top", (d3.event.pageY+15) + "px");
+                d3.selectAll("."+d.StationNode.id)
+                    .attr("fill", d => { return (d.id != undefined) ? that.stationColor(d.id) : that.stationColor(d.StationNode.id)})
+                    .classed("CHSP",true);
+            })
+            .on("mouseout", function (d) {
+                d3.select("#tooltip").transition()
+                    .duration(500)
+                    .style("opacity", 0);
+                d3.selectAll("."+d.StationNode.id)
+                    .attr("fill", d => { return (d.id != undefined) ? "rgb(0, 153, 255)" : "rgb(0, 153, 255)"})
+                    .classed("CHSP",false);
+                d3.selectAll(".station_node")
+                    .attr("fill", d => that.stationColor(d.StationNode.id));
+            });
+
     }
 
     /**

@@ -91,7 +91,7 @@ Promise.all([
             powNet.links[i].aPF = d3.entries(d).slice(2)
         }
     });
-    console.log("Power Net: ",powNet);
+    //console.log("Power Net: ",powNet);
 
     /** TRANSIT SYSTEM DATA 
      * Make nodes and links out of bus stations 
@@ -188,7 +188,7 @@ Promise.all([
         return Bus_Data;
     }
 
-    console.log("aload",files[0])
+    //console.log("aload",files[0])
      //Adding relevant data to bus station nodes
      pow_stations.forEach( (d, i) => {
          transNet.nodes.push({
