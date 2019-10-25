@@ -112,7 +112,8 @@ Promise.all([
             "energy": d3.entries(d).slice(1),
             "power":null,
             "Stations": {},
-            "Speeds": {}
+            "Speeds": {},
+            "Location": {}
         })
     });
 
@@ -127,9 +128,17 @@ Promise.all([
     //console.log("Station Data: ",files[8])
 
     files[8].forEach( (d, i) => {
+        //console.log(d)
         bebs.forEach( (c,j) => {
             if (c.BusID == d["BusID"]){
                 c.Stations[d["StationName"]] = d3.entries(d).slice(0,-5)
+                //Could potentially do location calculation here
+                d3.entries(d).slice(0,-5).forEach( (b,k) =>{
+                    //return array with stations when bus is there and undefined when on the road
+                    //Messy but... I'm too stupid to figure out an alternative 
+                    (b.value == '1') ? c.Location[k] = d.StationName : c.Location[k] = c.Location[k];
+                })
+
             }
         })
     });
@@ -143,7 +152,21 @@ Promise.all([
         })
     });
 
-    console.log("BEBs",bebs)
+    //console.log("BEBs",bebs)
+
+    //Want an array for each bus that for every time says where the bus is.....
+    
+    //console.log("1 or 0 in second item of station array:",d3.entries(bebs[11].Stations)[1].value[1].value)
+    //So, I need to iterate over bebs first of all, stations second of all, and then time points
+    //End goal is 288 length array saying what station (if any) a certain BEB is at 
+    // files[8].forEach( (d, i) => { //104 iterations
+    //     //console.log(d)
+    //     // bebs.forEach( (c,j) => {
+    //     //     if (c.BusID == d["BusID"]){
+    //     //         c.Stations[d["StationName"]] = d3.entries(d).slice(0,-5)
+    //     //     }
+    //     // })
+    // });
 
     // Create 7 objects corresponding to each station. This will be the trans network I visualize.
     // Seems pointless to visualize any of the other stops because we have no data about those stops
@@ -229,7 +252,7 @@ Promise.all([
      */
 
 
-    console.log("Trans net: ",transNet);
+    //console.log("Trans net: ",transNet);
 
 
     /** Pass data into TransNet class */
@@ -241,6 +264,9 @@ Promise.all([
     let powNetwork = new PowNet(powNet);
     powNetwork.createNet();
     powNetwork.updateNet();
+
+    let table = new Table(bebs,transNet)
+    table.createTable();
 
 
 });

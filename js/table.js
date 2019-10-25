@@ -4,6 +4,8 @@ class Table{
     constructor(BEBdata,station_Data){
         this.BEB = BEBdata;
         this.station = station_Data;
+        console.log("BEBdata",this.BEB)
+        console.log("Station_Data",this.station)
 
         //Margins for table cells- the bostock way
         this.margin = {top: 0, right: 10, bottom: 0, left: 10};
