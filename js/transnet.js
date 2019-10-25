@@ -82,7 +82,11 @@ class TransNet {
         this.stationColor = d3.scaleOrdinal(d3.schemeSet3).domain(pow_stations);
 
 
-        let powSVG = d3.select(".view1").select("svg");
+        //Select view1 and append an svg to it
+        let powSVG = d3.select(".view1").append("svg")
+            .attr("height",this.height+this.margin.top+this.margin.bottom)
+            .attr("width",this.width+this.margin.left+this.margin.right);
+
 
         /** Charging station interface */
         let CSGroup = powSVG.append("g")
@@ -249,25 +253,42 @@ class TransNet {
         // Creating lines that will connect the trans nodes 
         this.lineOTTC = [{"x":20,"y":50},{"x":80,"y":50},
         {"x":80,"y":645},{"x":413,"y":645}];
+        this.lineOTTC2 = [{"x":20,"y":50},{"x":20,"y":10},
+        {"x":-470,"y":10},{"x":-470,"y":60},
+        {"x":-470,"y":85},{"x":-440,"y":85}];
 
         this.lineKJTC = [{"x":20,"y":145},{"x":80,"y":145},
+        {"x":80,"y":245},{"x":235,"y":245}];
+        this.lineKJTC2 = [{"x":20,"y":145},{"x":80,"y":145},
         {"x":80,"y":245},{"x":235,"y":245}];
 
         this.lineCTH = [{"x":20,"y":240},{"x":200,"y":240},
         {"x":200,"y":350},{"x":310,"y":350},
         {"x":310,"y":389}];
+        this.lineCTH2 = [{"x":20,"y":240},{"x":200,"y":240},
+        {"x":200,"y":350},{"x":310,"y":350},
+        {"x":310,"y":389}];
 
         this.lineJRPR = [{"x":20,"y":335},{"x":150,"y":335},
+        {"x":150,"y":60}];
+        this.lineJRPR2 = [{"x":20,"y":335},{"x":150,"y":335},
         {"x":150,"y":60}];
         
         this.lineKPR = [{"x":20,"y":430},{"x":200,"y":430},
         {"x":200,"y":550},{"x":480,"y":550},
         {"x":480,"y":360}];
+        this.lineKPR2 = [{"x":20,"y":430},{"x":200,"y":430},
+        {"x":200,"y":550},{"x":480,"y":550},
+        {"x":480,"y":360}];
 
         this.lineEH = [{"x":20,"y":525},{"x":175,"y":525},
         {"x":175,"y":145},{"x":210,"y":145}];
+        this.lineEH2 = [{"x":20,"y":525},{"x":175,"y":525},
+        {"x":175,"y":145},{"x":210,"y":145}];
 
         this.lineGS = [{"x":20,"y":620},{"x":270,"y":620},
+        {"x":270,"y":410}];
+        this.lineGS2 = [{"x":20,"y":620},{"x":270,"y":620},
         {"x":270,"y":410}];
 
         // Now let's create Station node area
@@ -301,31 +322,40 @@ class TransNet {
                     });
                 
                 let line_data = null;
+                let line_data2 = null;
                 
                 switch(parseInt(d.StationID)){
                     case 1:
                        line_data = that.lineOTTC;
+                       line_data2 = that.lineOTTC2;
                        break;
                     case 2:
                         line_data = that.lineKJTC;
+                        line_data2 = that.lineKJTC2;
                         break;
                     case 3:
                         line_data = that.lineCTH;
+                        line_data2 = that.lineCTH2;
                         break;
                     case 4:
                         line_data = that.lineJRPR;
+                        line_data2 = that.lineJRPR2;
                         break;
                     case 5:
                         line_data = that.lineKPR;
+                        line_data2 = that.lineKPR2;
                         break;
                     case 6:
                         line_data = that.lineEH;
+                        line_data2 = that.lineEH2;
                         break;
                     case 7:
                         line_data = that.lineGS;
+                        line_data2 = that.lineGS2;
                         break;
                 }
 
+                //Path to trans
                 let path = that.lineLayer.append("path")
                     .attr("class","netline")
                     .attr("stroke","black")
@@ -338,6 +368,23 @@ class TransNet {
                 path
                     .attr("stroke-dasharray",totalLength + " " +totalLength)
                     .attr("stroke-dashoffset",totalLength)
+                    .transition()
+                    .duration(1000)
+                    .attr("stroke-dashoffset",0);
+
+                // Path to power
+                let path2 = that.lineLayer.append("path")
+                    .attr("class","netline")
+                    .attr("stroke","black")
+                    .attr("stroke-width",0.5)
+                    .attr("fill","none")
+                    .attr("d",lineFunction(line_data2));
+
+                let totalLength2 = path2.node().getTotalLength();
+
+                path2
+                    .attr("stroke-dasharray",totalLength2 + " " +totalLength2)
+                    .attr("stroke-dashoffset",totalLength2)
                     .transition()
                     .duration(1000)
                     .attr("stroke-dashoffset",0);

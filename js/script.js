@@ -231,14 +231,16 @@ Promise.all([
 
     console.log("Trans net: ",transNet);
 
-    /** Pass data into PowNet class */
-    let powNetwork = new PowNet(powNet);
-    powNetwork.createNet();
-    powNetwork.updateNet();
 
     /** Pass data into TransNet class */
     let transNetwork = new TransNet(transNet);
     transNetwork.createNet();
     transNetwork.updateNet();
+    
+    /** Pass data into PowNet class */
+    let powNetwork = new PowNet(powNet);
+    powNetwork.createNet();
+    powNetwork.updateNet();
+
 
 });

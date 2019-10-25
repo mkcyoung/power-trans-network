@@ -128,10 +128,8 @@ class PowNet {
         this.stationColor = d3.scaleOrdinal(d3.schemeSet3).domain(pow_stations);
 
 
-        //Select view1 and append an svg to it
-        let powSVG = d3.select(".view1").append("svg")
-            .attr("height",this.height+this.margin.top+this.margin.bottom)
-            .attr("width",this.width+this.margin.left+this.margin.right);
+        
+        let powSVG = d3.select(".view1").select("svg");
 
         let netGroup = powSVG.append("g")
             .attr("transform","translate("+this.margin.left+","+this.margin.top+")");
