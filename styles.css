@@ -2,16 +2,17 @@
 .wrapper{
     font-family: "Avenir Next";
     display: grid;
-    grid-template-columns: 1fr 1fr 1fr 1fr;
-    grid-template-rows: 0.5fr 0.5fr 1fr 1fr 1fr;
+    grid-template-columns: repeat(2, 450px) 300px 1fr;
+    grid-template-rows: 0.5fr 200px 200px 200px 200px 400px;
     grid-template-areas: 
             "title title title title "
             "power power power table1 "
             "power power power table1 "
             "power power power table1  "
-            "power power power table1 ";
-    width: 100vw;
-    height: 100vh;
+            "power power power table1 "
+            "info info info info";
+    /* width: 100vw;
+    height: 100vh; */
 }
 
 .masthead{
@@ -74,15 +75,15 @@
     stroke-width: 3px;
     /* filter: saturate(1); */
 }
-.charge{
+/* .charge{ */
     /* fill: rgb(0, 153, 255) */
-}
-.norm{
+/* } */
+/* .norm{ */
     /* fill: rgb(230, 255, 206) */
-}
-.transNode{
+/* } */
+/* .transNode{ */
     /* fill: rgb(0, 153, 255) */
-}
+/* } */
 
 
 /*tooltip */
@@ -140,4 +141,81 @@
     font-size: 20px;
     font-weight: bolder;
     color: #81849a;
+}
+
+/* Table styling */
+
+/*Table styling*/
+.view2 {
+    width: 700px;
+    padding: 0.5em;
+    float: left;
+    /*height:875px;*/
+    /*overflow: scroll;*/
+    /*overflow:auto;*/
+}
+
+#mytable2 tbody{
+    display:block;
+    height:775px;
+    overflow:scroll;
+}
+table {
+    /*border-collapse: collapse;*/
+    font-family: "Avenir Next";
+}
+
+/*th {*/
+/*    font-weight: normal;*/
+/*    text-align: right;*/
+/*    min-width: 125px;*/
+/*}*/
+
+#mytable{
+    border-collapse: unset;
+    border-color: white;
+}
+
+thead th{
+    cursor: s-resize;
+    font-size: 20px;
+    font-weight: normal;
+    color: #484b5a;
+    /*padding-left: 4px;*/
+    /*padding-right: 4px;*/
+    min-width: 100px;
+    text-align: center;
+    background: rgba(23, 162, 184, 0.15);
+
+}
+
+
+tbody th{
+    font-weight: normal;
+    font-size: 16px;
+    text-align: left;
+    color:#484b5a;
+    padding-left: 4px;
+    /*padding-right: 4px;*/
+    min-width: 100px;
+}
+
+tbody td{
+    font-size: 16px;
+    font-weight: normal;
+    text-align: center;
+    color: #484b5a;
+    /*height: 32px;*/
+    padding-left: 3.75px;
+    /*padding-right: 4px;*/
+    min-width: 100px;
+
+}
+tbody tr:hover{
+    background-color: rgba(23, 162, 184, 0.15);
+}
+
+.view2 rect {
+    stroke: black;
+    stroke-width: 1.25px;
 }
