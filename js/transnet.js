@@ -76,7 +76,7 @@ class TransNet {
         this.buscountScale = d3.scaleSqrt().domain([min_bus_count,max_bus_count]).range([7,22]);
         this.powLoadScale = d3.scaleSequential(d3.interpolateViridis).domain([min_chsp,max_chsp]);
         //Setting custom max because the first node skews it - have this for color setting
-        this.aLoadScale = d3.scaleSequential(d3.interpolateMagma).domain([min_aload,400])
+        this.aLoadScale = d3.scaleSequential(d3.interpolatePurples).domain([min_aload,400])
         //Make an ordinal color scale for stations
         let pow_stations = ["n2","n13","n9","n33","n25","n31","n8"];
         this.stationColor = d3.scaleOrdinal(d3.schemeSet3).domain(pow_stations);

@@ -2,7 +2,7 @@
 .wrapper{
     font-family: "Avenir Next";
     display: grid;
-    grid-template-columns: repeat(2, 450px) 300px 1fr;
+    grid-template-columns: repeat(2, 450px) 200px 1fr;
     grid-template-rows: 0.5fr 200px 200px 200px 200px 400px;
     grid-template-areas: 
             "title title title title "
@@ -147,7 +147,7 @@
 
 /*Table styling*/
 .view2 {
-    width: 700px;
+    width: 750px;
     padding: 0.5em;
     float: left;
     /*height:875px;*/
@@ -157,7 +157,7 @@
 
 #mytable2 tbody{
     display:block;
-    height:775px;
+    height:700px;
     overflow:scroll;
 }
 table {
@@ -183,7 +183,7 @@ thead th{
     color: #484b5a;
     /*padding-left: 4px;*/
     /*padding-right: 4px;*/
-    min-width: 100px;
+    min-width: 150px;
     text-align: center;
     background: rgba(23, 162, 184, 0.15);
 
@@ -197,7 +197,7 @@ tbody th{
     color:#484b5a;
     padding-left: 4px;
     /*padding-right: 4px;*/
-    min-width: 100px;
+    min-width: 150px;
 }
 
 tbody td{
@@ -208,7 +208,7 @@ tbody td{
     /*height: 32px;*/
     padding-left: 3.75px;
     /*padding-right: 4px;*/
-    min-width: 100px;
+    min-width: 150px;
 
 }
 tbody tr:hover{

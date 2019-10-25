@@ -9,7 +9,7 @@ class Table{
         console.log("Station_Data",this.station)
 
         //Margins for table cells- the bostock way
-        this.margin = {top: 0, right: 10, bottom: 0, left: 10};
+        this.margin = {top: 10, right: 10, bottom: 10, left: 10};
         this.width = 150 - this.margin.left - this.margin.right;
         this.height = 30 - this.margin.top-this.margin.bottom;
 
@@ -43,10 +43,44 @@ class Table{
     createTable(){
 
     //Set-up scales etc. 
+    
+    //Finding max/min of BEB energy
+    let max_energy = d3.max(this.BEB.map((d) => {
+        return d3.max(d.energy.map((d)=>{
+            return parseInt(d.value)
+        }))
+    }));
+    let min_energy = d3.min(this.BEB.map((d) => {
+        return d3.min(d.energy.map((d)=>{
+            return parseInt(d.value)
+        }))
+    }));
+    //console.log(max_energy,min_energy);
+    //Finding max/min of BEB power
+    let max_power = d3.max(this.BEB.map((d) => {
+        return d3.max(d.power.map((d)=>{
+            return parseInt(d.value)
+        }))
+    }));
+    let min_power = d3.min(this.BEB.map((d) => {
+        return d3.min(d.power.map((d)=>{
+            return parseInt(d.value)
+        }))
+    }));
+
+
+    //Scales
+    this.energybarScale = d3.scaleLinear().domain([min_energy,max_energy]).range([this.margin.left,this.width-this.margin.right]);
+    this.energyColorScale = d3.scaleSequential(d3.interpolateReds).domain([min_energy,max_energy]);
+    this.powerBarScale = d3.scaleLinear().domain([min_power,max_power]).range([this.margin.left,this.width-this.margin.right]);
+    this.powerColorScale = d3.scaleSequential(d3.interpolateBlues).domain([min_power,max_power]);
+    //Make an ordinal color scale for stations
+    let pow_stations = ["OTTC","KJTC","CTH","JRPR","KPR","EH","GS"];
+    this.stationColor = d3.scaleOrdinal(d3.schemeSet3).domain(pow_stations);
 
 
     //Create axes
-
+    
 
     //Implement sorting
 
@@ -56,6 +90,7 @@ class Table{
     updateTable(data){
 
         /** Updates the table with data **/
+        let that = this;
 
         //Create table rows
         let rows = d3.select("tbody").selectAll('tr').data(data);
@@ -65,12 +100,12 @@ class Table{
 
         //Appending and initializing table headers + table cells
         rowsE.append("th").classed("busID",true).append("text");
-        rowsE.append("td").classed("location",true).append("text")
+        rowsE.append("td").classed("locationR",true).append("text").classed("locationT",true);
         rowsE.append("td").classed("energyR",true).append("svg")
             .append("rect").classed("energyRect",true);
         rowsE.append("td").classed("powerR",true).append("svg")
             .append("rect").classed("powerRect",true);
-        rowsE.append("td").classed("speed",true).append("text")
+        rowsE.append("td").classed("speedR",true).append("text").classed("speedT",true)
 
 
         //Handle exits
@@ -85,43 +120,61 @@ class Table{
         rows.select(".busID")
             .html(d => d.id);
 
-        //frequency
-        let locationR = rows.select(".location")
+        //Location
+        let locationR = rows.select(".locationR")
             .attr("width",this.width+this.margin.left+this.margin.right)
-            .attr("height",this.height+this.margin.top+this.margin.bottom)
-            .attr("transform",`translate(0,${this.margin.top*2})`);
+            .attr("height",this.height+this.margin.top+this.margin.bottom);
 
-        locationR.select("text")
+        locationR.select(".locationT")
             .attr("y",this.margin.top)
             .attr("x",this.margin.left)
-            .html(d => { ( d.location ) ? (d.location[this.activeTime]) : "road"  })
-            .attr("fill","red");
+            .style("color", d => (d.Location[this.activeTime] == undefined) ? "black" : this.stationColor(d.Location[this.activeTime]))
+            .text(d => (d.Location[this.activeTime] == undefined) ? "On the road" : d.Location[this.activeTime]);
 
-        // //Percentages
-        // let percR = rows.select(".percR").select("svg")
-        //     .attr("width",this.width+this.margin.left+this.margin.right)
-        //     .attr("height",this.height+this.margin.top+this.margin.bottom)
-        //     .attr("transform",`translate(0,${this.margin.top*2})`);
+        //Energy
+        let energyR = rows.select(".energyR").select("svg")
+            .attr("width",this.width+this.margin.left+this.margin.right)
+            .attr("height",this.height+this.margin.top+this.margin.bottom);
 
-        // //Dem side
-        // percR.select(".demRect")
-        //     .attr("y",this.margin.top)
-        //     .attr("x",d => (this.width+this.margin.left+this.margin.right)/2 - this.percScale(parseInt(d.percent_of_d_speeches)))
-        //     .attr("fill","#61a3e3")
-        //     .attr("width",d => this.percScale(parseInt(d.percent_of_d_speeches)))
-        //     .attr("height",this.height);
+        //Energy Rect
+        energyR.select(".energyRect")
+            .attr("y",this.margin.top)
+            .attr("x", d => this.margin.left + this.width + this.margin.right - this.energybarScale(parseInt(d.energy[this.activeTime].value)))
+            .attr("fill",d => this.energyColorScale(parseInt(d.energy[this.activeTime].value)))
+            .attr("width",d => this.energybarScale(parseInt(d.energy[this.activeTime].value)))
+            .attr("height",this.height);
 
-        // //Rep side
-        // percR.select(".repRect")
-        //     .attr("y",this.margin.top)
-        //     .attr("x",d => (this.width+this.margin.left+this.margin.right)/2)
-        //     .attr("fill","#a82e2e")
-        //     .attr("width",d => this.percScale(parseInt(d.percent_of_r_speeches)))
-        //     .attr("height",this.height);
+        //Power
+        let powerR = rows.select(".powerR").select("svg")
+            .attr("width",this.width+this.margin.left+this.margin.right)
+            .attr("height",this.height+this.margin.top+this.margin.bottom);
 
-        // //Total
-        // rows.select(".totalR")
-        //     .html((d) => d.total);
+        //Power Rect
+        powerR.select(".powerRect")
+            .attr("y",this.margin.top)
+            .attr("x",0)
+            .attr("fill",d => this.powerColorScale(parseInt(d.power[this.activeTime].value)))
+            .attr("width",d => this.powerBarScale(parseInt(d.power[this.activeTime].value)))
+            .attr("height",this.height);
+
+        // Speed
+        rows.select(".speedR").select("text")
+            .text((d) => {
+                let speed_list = [];
+                //console.log(d)
+                if(d.Location[that.activeTime] == undefined){
+                    d3.entries(d.Speeds).forEach( f => {
+                        console.log(f.value[that.activeTime].value)
+                        speed_list.push(parseFloat(f.value[that.activeTime].value).toFixed(2))
+                            // return console.log(f.value[that.activeTime].value)
+                    })
+                    return d3.max(speed_list).toString()
+                }
+                else{
+                    return "At stop"
+                }
+                
+            });
     
 
         
