@@ -6,10 +6,10 @@
     grid-template-rows: 0.5fr 0.5fr 1fr 1fr 1fr;
     grid-template-areas: 
             "title title title title "
-            "power power power table "
-            "power power power table "
-            "power power power table  "
-            "power power power table ";
+            "power power power table1 "
+            "power power power table1 "
+            "power power power table1  "
+            "power power power table1 ";
     width: 100vw;
     height: 100vh;
 }
@@ -25,6 +25,10 @@
 .view1{
     grid-area: power;
     /* background: royalblue; */
+}
+
+.view2{
+    grid-area: table1;
 }
 
 
