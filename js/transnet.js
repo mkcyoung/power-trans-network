@@ -259,37 +259,36 @@ class TransNet {
 
         this.lineKJTC = [{"x":20,"y":145},{"x":80,"y":145},
         {"x":80,"y":245},{"x":235,"y":245}];
-        this.lineKJTC2 = [{"x":20,"y":145},{"x":80,"y":145},
-        {"x":80,"y":245},{"x":235,"y":245}];
+        this.lineKJTC2 = [{"x":20,"y":145},{"x":-200,"y":145},
+        {"x":-200,"y":470},{"x":-310,"y":470}];
 
         this.lineCTH = [{"x":20,"y":240},{"x":200,"y":240},
         {"x":200,"y":350},{"x":310,"y":350},
-        {"x":310,"y":389}];
-        this.lineCTH2 = [{"x":20,"y":240},{"x":200,"y":240},
-        {"x":200,"y":350},{"x":310,"y":350},
-        {"x":310,"y":389}];
+        {"x":310,"y":395}];
+        this.lineCTH2 = [{"x":20,"y":240},{"x":-200,"y":240},
+        {"x":-200,"y":330},{"x":-355,"y":330}];
 
         this.lineJRPR = [{"x":20,"y":335},{"x":150,"y":335},
-        {"x":150,"y":60}];
-        this.lineJRPR2 = [{"x":20,"y":335},{"x":150,"y":335},
-        {"x":150,"y":60}];
+        {"x":150,"y":55}];
+        this.lineJRPR2 = [{"x":20,"y":335},{"x":-80,"y":335},
+        {"x":-80,"y":480}];
         
         this.lineKPR = [{"x":20,"y":430},{"x":200,"y":430},
         {"x":200,"y":550},{"x":480,"y":550},
-        {"x":480,"y":360}];
-        this.lineKPR2 = [{"x":20,"y":430},{"x":200,"y":430},
-        {"x":200,"y":550},{"x":480,"y":550},
-        {"x":480,"y":360}];
+        {"x":480,"y":350}];
+        this.lineKPR2 = [{"x":20,"y":430},{"x":-50,"y":430},
+        {"x":-50,"y":120},{"x":-230,"y":120}];
 
         this.lineEH = [{"x":20,"y":525},{"x":175,"y":525},
-        {"x":175,"y":145},{"x":210,"y":145}];
-        this.lineEH2 = [{"x":20,"y":525},{"x":175,"y":525},
-        {"x":175,"y":145},{"x":210,"y":145}];
+        {"x":175,"y":145},{"x":215,"y":145}];
+        this.lineEH2 = [{"x":20,"y":525},{"x":-30,"y":525},
+        {"x":-30,"y":400},{"x":-150,"y":400}];
 
         this.lineGS = [{"x":20,"y":620},{"x":270,"y":620},
-        {"x":270,"y":410}];
-        this.lineGS2 = [{"x":20,"y":620},{"x":270,"y":620},
-        {"x":270,"y":410}];
+        {"x":270,"y":415}];
+        this.lineGS2 = [{"x":20,"y":620},{"x":-150,"y":620},
+        {"x":-150,"y":675},{"x":-420,"y":675},
+        {"x":-420,"y":295},{"x":-380,"y":295}];
 
         // Now let's create Station node area
         let station_nodes = this.stations.selectAll("circle")
@@ -369,7 +368,7 @@ class TransNet {
                     .attr("stroke-dasharray",totalLength + " " +totalLength)
                     .attr("stroke-dashoffset",totalLength)
                     .transition()
-                    .duration(1000)
+                    .duration(750)
                     .attr("stroke-dashoffset",0);
 
                 // Path to power
@@ -386,7 +385,7 @@ class TransNet {
                     .attr("stroke-dasharray",totalLength2 + " " +totalLength2)
                     .attr("stroke-dashoffset",totalLength2)
                     .transition()
-                    .duration(1000)
+                    .duration(750)
                     .attr("stroke-dashoffset",0);
 
             })
