@@ -74,9 +74,9 @@ class TransNet {
         /** Set Scales  */
         //Make circle size scale for bus count
         this.buscountScale = d3.scaleSqrt().domain([min_bus_count,max_bus_count]).range([7,22]);
-        this.powLoadScale = d3.scaleSequential(d3.interpolateOranges).domain([min_chsp,max_chsp]);
+        this.powLoadScale = d3.scaleSequential(d3.interpolateViridis).domain([min_chsp,max_chsp]);
         //Setting custom max because the first node skews it - have this for color setting
-        this.aLoadScale = d3.scaleSequential(d3.interpolatePurples).domain([min_aload,400])
+        this.aLoadScale = d3.scaleSequential(d3.interpolateMagma).domain([min_aload,400])
         //Make an ordinal color scale for stations
         let pow_stations = ["n2","n13","n9","n33","n25","n31","n8"];
         this.stationColor = d3.scaleOrdinal(d3.schemeSet3).domain(pow_stations);
@@ -87,56 +87,32 @@ class TransNet {
             .attr("height",this.height+this.margin.top+this.margin.bottom)
             .attr("width",this.width+this.margin.left+this.margin.right);
 
+        // TODO, my idea here is to make a little legend with all 3 of the color scales up
         //Create svg for color scale legend
-        let aLeg =  d3.select(".view1").append("svg")
+        let scaleLegend =  d3.select(".view1").append("svg")
             .attr("transform","translate(100,-200)");
-        let defs = aLeg.append('defs');
+        let defs = scaleLegend.append('defs');
         //Append a linearGradient element to the defs and give it a unique id
-        var linearGradient = defs.append("linearGradient")
-            .attr("id", "linear-gradient");
-
-        //Horizontal gradient
-        linearGradient
-            .attr("x1", "0%")
-            .attr("y1", "0%")
-            .attr("x2", "100%")
-            .attr("y2", "0%");
-
-        //Set the color for the start (0%)
-        linearGradient.append("stop")
-            .attr("offset", "0%")
-            .attr("stop-color", this.aLoadScale(this.aLoadScale.domain()[0])); 
-
-        //Set the color for the end (100%)
-        linearGradient.append("stop")
-            .attr("offset", "100%")
-            .attr("stop-color", this.aLoadScale(this.aLoadScale.domain()[1])); 
+        let linearGradient_AL = defs.append("linearGradient")
+            .attr("id", "linear-gradient-AL");
+        let linearGradient_CP = defs.append("linearGradient")
+            .attr("id", "linear-gradient-CP");
+        
+        this.scaleLegender(linearGradient_AL,this.aLoadScale)
+        this.scaleLegender(linearGradient_CP,this.powLoadScale)
 
         //Draw the rectangle and fill with gradient
-        aLeg.append("rect")
+        scaleLegend.append("rect")
             .attr("width", 200)
             .attr("height", 20)
-            .style("fill", "url(#linear-gradient)");
+            .style("fill", "url(#linear-gradient-AL)");
 
-        //Setting up legend for scales
-        // first make group
-        function ramp(color, n = 512) {
-            const canvas = d3.select(".view1").append("canvas").node();
-            const context = canvas.getContext("2d");
-            canvas.style.margin = "0 -14px";
-            canvas.style.width = "calc(100% + 28px)";
-            canvas.style.height = "100px";
-            canvas.style.imageRendering = "pixelated";
-            for (let i = 0; i < n; ++i) {
-              context.fillStyle = color(i / (n - 1));
-              context.fillRect(i, 0, 2, 2);
-            }
-            return canvas;
-          }
-
-          ramp(this.aLoadScale);
-
-
+        //Draw the rectangle and fill with gradient
+        scaleLegend.append("rect")
+            .attr("width", 200)
+            .attr("height", 20)
+            .attr("transform","translate(0,30)")
+            .style("fill", "url(#linear-gradient-CP)");
 
         /** Charging station interface */
         let CSGroup = powSVG.append("g")
@@ -482,5 +458,12 @@ class TransNet {
         return text;
     }
 
+    scaleLegender(linearGradient,colorScale){
 
+        linearGradient.selectAll("stop")
+            .data(colorScale.ticks().map((t, i, n) => ({ offset: `${100*i/n.length}%`, color: colorScale(t) })))
+            .enter().append("stop")
+            .attr("offset", d => d.offset)
+            .attr("stop-color", d => d.color)
+    }
 }
