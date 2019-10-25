@@ -87,6 +87,14 @@ class TransNet {
             .attr("height",this.height+this.margin.top+this.margin.bottom)
             .attr("width",this.width+this.margin.left+this.margin.right);
 
+        //Setting up legend for scales
+        // first make group
+        let aLoadScaleG = d3.select(".view1")
+            .append("div")
+            .attr("transform", `translate(${this.margin.left},${this.height})`)
+            .attr("id","aLoadScale");
+
+        this.continuous("#aLoadScale", this.aLoadScale);
 
         /** Charging station interface */
         let CSGroup = powSVG.append("g")
@@ -432,5 +440,78 @@ class TransNet {
         return text;
     }
 
+    /** Functions from Kai: http://bl.ocks.org/syntagmatic/e8ccca52559796be775553b467593a9f
+     * Used for making color legends for sequential color scales
+     * example: ramp(d3.interpolateRainbow) 
+     */
+        // create continuous color legend
+    continuous(selector_id, colorscale) {
+        console.log("in continuous")
+        console.log(selector_id,colorscale)
+        let legendheight = 200,
+            legendwidth = 80,
+            margin = {top: 10, right: 60, bottom: 10, left: 2};
+    
+        let canvas = d3.select(selector_id)
+            .style("height", legendheight + "px")
+            .style("width", legendwidth + "px")
+            .style("position", "relative")
+            .append("canvas")
+            .attr("height", legendheight - margin.top - margin.bottom)
+            .attr("width", 1)
+            .style("height", (legendheight - margin.top - margin.bottom) + "px")
+            .style("width", (legendwidth - margin.left - margin.right) + "px")
+            .style("border", "1px solid #000")
+            .style("position", "absolute")
+            .style("top", (margin.top) + "px")
+            .style("left", (margin.left) + "px")
+            .node();
+        console.log(canvas)
+    
+        let ctx = canvas.getContext("2d");
+    
+        let legendscale = d3.scaleLinear()
+            .range([1, legendheight - margin.top - margin.bottom])
+            .domain(colorscale.domain());
+    
+        // image data hackery based on http://bl.ocks.org/mbostock/048d21cf747371b11884f75ad896e5a5
+        let image = ctx.createImageData(1, legendheight);
+        d3.range(legendheight).forEach(function(i) {
+        let c = d3.rgb(colorscale(legendscale.invert(i)));
+            image.data[4*i] = c.r;
+            image.data[4*i + 1] = c.g;
+            image.data[4*i + 2] = c.b;
+            image.data[4*i + 3] = 255;
+            });
+        ctx.putImageData(image, 0, 0);
+    
+        // A simpler way to do the above, but possibly slower. keep in mind the legend width is stretched because the width attr of the canvas is 1
+        // See http://stackoverflow.com/questions/4899799/whats-the-best-way-to-set-a-single-pixel-in-an-html5-canvas
+        /*
+        d3.range(legendheight).forEach(function(i) {
+        ctx.fillStyle = colorscale(legendscale.invert(i));
+        ctx.fillRect(0,i,1,1);
+        });
+        */
+    
+        var legendaxis = d3.axisRight()
+            .scale(legendscale)
+            .tickSize(6)
+            .ticks(8);
+    
+        var svg = d3.select(selector_id)
+            .append("svg")
+            .attr("height", (legendheight) + "px")
+            .attr("width", (legendwidth) + "px")
+            .style("position", "absolute")
+            .style("left", "0px")
+            .style("top", "0px")
+    
+        svg
+            .append("g")
+            .attr("class", "axis")
+            .attr("transform", "translate(" + (legendwidth - margin.left - margin.right + 3) + "," + (margin.top) + ")")
+            .call(legendaxis);
+    };
 
 }
