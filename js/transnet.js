@@ -2,11 +2,13 @@
 class TransNet {
 
     // Creates a Power Network object
-    constructor(data,time){
+    constructor(data,bebs,time,table){
         //Assigning data variable
         //console.log(data)
         this.data = data;
         this.activeTime = time;
+        this.bebs = bebs;
+        this.table = table;
 
         //Margins - the bostock way
         this.margin = {top: 20, right: 20, bottom: 20, left: 20};
@@ -171,7 +173,7 @@ class TransNet {
             .classed("transNode",true)
             .attr("r", d => this.buscountScale(d.BusData[this.activeTime].total))
             .attr("fill", d => this.powLoadScale(d.chSP[this.activeTime].value))
-            //tooltip!
+            //tooltip + linked styling when hovered over
             .on("mouseover", function (d) {
                 d3.select("#tooltip").transition()
                     .duration(200)
@@ -427,7 +429,19 @@ class TransNet {
 
                 d3.selectAll(".netline").remove();
 
-            });
+            })
+            //Updates table to consist of only busses at this station
+            .on("click",function (d) {
+                console.log(d.BusData[that.activeTime].busses)
+                let busses = d.BusData[that.activeTime].busses;
+                busses = busses.map((c) => parseInt(c))
+                console.log(busses)
+                let newData = that.bebs.filter((f,i) => busses.includes(f.BusID));
+                console.log(newData)
+                that.table.BEB = newData;
+                that.table.updateTable();
+
+            });;
 
     }
 

@@ -76,9 +76,13 @@ class Table{
     this.powerColorScale = d3.scaleSequential(d3.interpolateBlues).domain([min_power,max_power]);
     //Make an ordinal color scale for stations
     let pow_stations = ["OTTC","KJTC","CTH","JRPR","KPR","EH","GS"];
+    let pow_stations_nodes = ["n2","n13","n9","n33","n25","n31","n8"];
+    this.station_mapping = {};
+    pow_stations.forEach((pow_stations, i) => this.station_mapping[pow_stations] = pow_stations_nodes[i]);
+    //console.log(station_mapping);
     this.stationColor = d3.scaleOrdinal(d3.schemeSet3).domain(pow_stations);
-
-
+    //Have to make a separate scale  with nodes as range b/c I'm a sloppy mthrfker
+    this.stationColorNodes = d3.scaleOrdinal(d3.schemeSet3).domain(pow_stations_nodes);
     //Create axes
     
 
@@ -178,16 +182,16 @@ class Table{
 
     });
 
-    this.updateTable(this.BEB);
+    this.updateTable();
     }
 
-    updateTable(data){
+    updateTable(){
 
         /** Updates the table with data **/
         let that = this;
 
         //Create table rows
-        let rows = d3.select("tbody").selectAll('tr').data(data);
+        let rows = d3.select("tbody").selectAll('tr').data(this.BEB);
 
         //Enter selection
         let rowsE = rows.enter().append('tr');
@@ -281,11 +285,15 @@ class Table{
                 d3.select("#s_tooltip").html(that.tooltipRenderB(d))
                     .style("left","800px") //(d3.event.pageX+30)
                     .style("top", "100px"); //(d3.event.pageY-80)
+                d3.selectAll("."+that.station_mapping[d.Location[that.activeTime]])
+                    .classed("CHSP",true);
             })
             .on("mouseout", function (d) {
                 d3.select("#s_tooltip").transition()
                     .duration(500)
                     .style("opacity", 0);
+                d3.selectAll("."+that.station_mapping[d.Location[that.activeTime]]) 
+                    .classed("CHSP",false);
             });
         
     }
