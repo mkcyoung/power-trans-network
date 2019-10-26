@@ -86,6 +86,7 @@ class TransNet {
 
         //Select view1 and append an svg to it
         let powSVG = d3.select(".view1").append("svg")
+            .attr("class","netsvg")
             .attr("height",this.height+this.margin.top+this.margin.bottom)
             .attr("width",this.width+this.margin.left+this.margin.right);
 
@@ -136,6 +137,13 @@ class TransNet {
         //  group (so the circles will always be on top of the lines)
         this.linkLayer = netGroup.append("g")
             .attr("class", "links");
+
+        //make Station tooltip div
+        d3.select(".view1")
+            .append("div")
+            .attr("class", "s_tooltip")
+            .attr("id","s_tooltip_click")
+            .style("opacity", 0);
 
         //make Station tooltip div
         d3.select(".view1")
@@ -432,16 +440,104 @@ class TransNet {
             })
             //Updates table to consist of only busses at this station
             .on("click",function (d) {
-                console.log(d.BusData[that.activeTime].busses)
+                //console.log(d.BusData[that.activeTime].busses)
                 let busses = d.BusData[that.activeTime].busses;
                 busses = busses.map((c) => parseInt(c))
-                console.log(busses)
+                //console.log(busses)
                 let newData = that.bebs.filter((f,i) => busses.includes(f.BusID));
-                console.log(newData)
+                //console.log(newData)
                 that.table.BEB = newData;
                 that.table.updateTable();
 
+                //Want to keep lines connecting other nodes and tooltip (copied from above - should make this a function)
+                d3.select("#s_tooltip_click").transition()
+                    .duration(200)
+                    .style("opacity", 1);
+                d3.select("#s_tooltip_click").html(that.tooltipRenderS(d))
+                    .style("left","800px") //(d3.event.pageX+30)
+                    .style("top", "100px"); //(d3.event.pageY-80)
+                
+                //Want to removes netlines
+                d3.selectAll(".netlineclick").remove();
+                d3.selectAll(".netline").remove();
+
+                //Creating lines that connect node to power station
+                let lineFunction = d3.line()
+                    .x(function(d){
+                        return d.x;
+                    })
+                    .y(function(d){
+                        return d.y;
+                    });
+                
+                let line_data = null;
+                let line_data2 = null;
+                
+                switch(parseInt(d.StationID)){
+                    case 1:
+                       line_data = that.lineOTTC;
+                       line_data2 = that.lineOTTC2;
+                       break;
+                    case 2:
+                        line_data = that.lineKJTC;
+                        line_data2 = that.lineKJTC2;
+                        break;
+                    case 3:
+                        line_data = that.lineCTH;
+                        line_data2 = that.lineCTH2;
+                        break;
+                    case 4:
+                        line_data = that.lineJRPR;
+                        line_data2 = that.lineJRPR2;
+                        break;
+                    case 5:
+                        line_data = that.lineKPR;
+                        line_data2 = that.lineKPR2;
+                        break;
+                    case 6:
+                        line_data = that.lineEH;
+                        line_data2 = that.lineEH2;
+                        break;
+                    case 7:
+                        line_data = that.lineGS;
+                        line_data2 = that.lineGS2;
+                        break;
+                }
+
+                //Path to trans
+                let path = that.lineLayer.append("path")
+                    .attr("class","netlineclick")
+                    .attr("stroke","black")
+                    .attr("stroke-width",0.5)
+                    .attr("fill","none")
+                    .attr("d",lineFunction(line_data));
+
+                let path2 = that.lineLayer.append("path")
+                    .attr("class","netlineclick")
+                    .attr("stroke","black")
+                    .attr("stroke-width",0.5)
+                    .attr("fill","none")
+                    .attr("d",lineFunction(line_data2));
             });;
+
+        // This clears a selection by listening for a click
+        document.addEventListener("click", function(e) {
+            if (e.target.classList.contains("netsvg")){
+            //console.log(e.target);
+            //Remove tooltip
+            d3.select("#s_tooltip_click")
+                    .style("opacity", 0);
+
+            //Restore data
+            that.table.BEB = that.bebs;
+            that.table.updateTable();
+            
+            //Remove net lines
+            d3.selectAll(".netlineclick").remove();
+
+            }
+
+        }, true);
 
     }
 

@@ -119,10 +119,10 @@
 .s_tooltip{
     position: absolute;
     text-align: right;
-    width: auto;
+    width: 250px;
     height: auto;
     padding: 2px;
-    background: rgba(255, 255, 255, 0.8);
+    background: rgba(255, 255, 255, 1);
     stroke: gray;
     border-radius: 2px;
     pointer-events: none;

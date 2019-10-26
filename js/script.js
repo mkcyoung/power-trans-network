@@ -265,7 +265,5 @@ Promise.all([
     powNetwork.createNet();
     powNetwork.updateNet();
 
-    
-
 
 });
