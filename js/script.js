@@ -108,6 +108,7 @@ Promise.all([
     files[6].forEach( (d, i) => {
         bebs.push({
             "id": d[""],
+            "route": null,
             "BusID": i+1,
             "energy": d3.entries(d).slice(1),
             "power":null,
@@ -134,10 +135,9 @@ Promise.all([
         bebs.forEach( (c,j) => {
             if (c.BusID == d["BusID"]){
                 c.Stations[d["StationName"]] = d3.entries(d).slice(0,-5)
-                //Could potentially do location calculation here
+                //Doing location 
                 d3.entries(d).slice(0,-5).forEach( (b,k) =>{
-                    //return array with stations when bus is there and undefined when on the road
-                    //Messy but... I'm too stupid to figure out an alternative 
+                    //return array with stations when bus is there and "on the road" when on the road
                     (b.value == '1') ? c.Location[k] = d.StationName : c.Location[k] = c.Location[k];
                     if (c.Location[k] == undefined){
                         c.Location[k] = "On the road"
@@ -154,24 +154,14 @@ Promise.all([
             if (c.BusID == d["BusID"]){
                 c.Speeds[d["StationName"]] = d3.entries(d).slice(0,-5)
             }
+            if (c.BusID == d["BusID"]){
+                c.route = d.Route;
+            }
         })
     });
 
     //console.log("BEBs",bebs)
-
-    //Want an array for each bus that for every time says where the bus is.....
     
-    //console.log("1 or 0 in second item of station array:",d3.entries(bebs[11].Stations)[1].value[1].value)
-    //So, I need to iterate over bebs first of all, stations second of all, and then time points
-    //End goal is 288 length array saying what station (if any) a certain BEB is at 
-    // files[8].forEach( (d, i) => { //104 iterations
-    //     //console.log(d)
-    //     // bebs.forEach( (c,j) => {
-    //     //     if (c.BusID == d["BusID"]){
-    //     //         c.Stations[d["StationName"]] = d3.entries(d).slice(0,-5)
-    //     //     }
-    //     // })
-    // });
 
     // Create 7 objects corresponding to each station. This will be the trans network I visualize.
     // Seems pointless to visualize any of the other stops because we have no data about those stops
@@ -260,17 +250,18 @@ Promise.all([
     //console.log("Trans net: ",transNet);
 
 
+    let time = 50;
     /** Pass data into TransNet class */
-    let transNetwork = new TransNet(transNet);
+    let transNetwork = new TransNet(transNet,time);
     transNetwork.createNet();
     transNetwork.updateNet();
     
     /** Pass data into PowNet class */
-    let powNetwork = new PowNet(powNet);
+    let powNetwork = new PowNet(powNet,time);
     powNetwork.createNet();
     powNetwork.updateNet();
 
-    let table = new Table(bebs,transNet)
+    let table = new Table(bebs,transNet,time)
     table.createTable();
 
 

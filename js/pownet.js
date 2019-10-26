@@ -2,10 +2,10 @@
 class PowNet {
 
     // Creates a Power Network object
-    constructor(data){
+    constructor(data,time){
         //Assigning data variable
         this.data = data;
-        this.activeTime = 50;
+        this.activeTime = time;
 
         //Margins - the bostock way
         this.margin = {top: 20, right: 20, bottom: 20, left: 20};

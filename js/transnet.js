@@ -2,11 +2,11 @@
 class TransNet {
 
     // Creates a Power Network object
-    constructor(data){
+    constructor(data,time){
         //Assigning data variable
         //console.log(data)
         this.data = data;
-        this.activeTime = 50;
+        this.activeTime = time;
 
         //Margins - the bostock way
         this.margin = {top: 20, right: 20, bottom: 20, left: 20};
@@ -333,7 +333,7 @@ class TransNet {
                     .style("opacity", 1);
                 d3.select("#s_tooltip").html(that.tooltipRenderS(d))
                     .style("left","800px") //(d3.event.pageX+30)
-                    .style("top", "175px"); //(d3.event.pageY-80)
+                    .style("top", "100px"); //(d3.event.pageY-80)
                 d3.selectAll("."+d.StationNode.id)
                     .attr("fill", d => { return (d.id != undefined) ? that.stationColor(d.id) : that.stationColor(d.StationNode.id)})
                     .classed("CHSP",true);

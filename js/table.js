@@ -1,10 +1,10 @@
 /** Class implementing the table */
 class Table{
 
-    constructor(BEBdata,station_Data){
+    constructor(BEBdata,station_Data,time){
         this.BEB = BEBdata;
         this.station = station_Data;
-        this.activeTime = 50;
+        this.activeTime = time;
         console.log("BEBdata",this.BEB)
         console.log("Station_Data",this.station)
 
@@ -178,13 +178,6 @@ class Table{
 
     });
 
-
-
-
-
-
-
-
     this.updateTable(this.BEB);
     }
 
@@ -270,7 +263,7 @@ class Table{
                             // return console.log(f.value[that.activeTime].value)
                     })
                     d.current_speed[that.activeTime] = d3.max(speed_list).toString();
-                    return d3.max(speed_list).toString()
+                    return (d3.max(speed_list)*12).toString()
                 }
                 else{
                     d.current_speed[that.activeTime] = 0;
@@ -279,8 +272,35 @@ class Table{
                 
             });
     
-
+        //tooltip
+        rows
+            .on("mouseover", function (d) {
+                d3.select("#s_tooltip").transition()
+                    .duration(200)
+                    .style("opacity", 1);
+                d3.select("#s_tooltip").html(that.tooltipRenderB(d))
+                    .style("left","800px") //(d3.event.pageX+30)
+                    .style("top", "100px"); //(d3.event.pageY-80)
+            })
+            .on("mouseout", function (d) {
+                d3.select("#s_tooltip").transition()
+                    .duration(500)
+                    .style("opacity", 0);
+            });
         
+    }
+
+    tooltipRenderB(data) {
+        let that = this;
+        let text = null;
+        text = "<h3>" + data.id + " ("+ data.BusID +")</h3>";
+        //Adds in relevant data
+        text = text + "<p> Location: "+ data.Location[that.activeTime] + "</p>";
+        text = text + "<p> Route: "+ data.route + "</p>";
+        text = text + "<p> Energy : "+  parseFloat(data.energy[that.activeTime].value).toFixed(2)+" kWh</p>";
+        text = text + "<p> Power : "+  parseFloat(data.power[that.activeTime].value).toFixed(2)+" kWh</p>";
+        text = text + "<p> Speed : "+  (parseFloat(data.current_speed[that.activeTime]) * 12).toFixed(2)+" mph</p>";
+        return text;
     }
 
 }
