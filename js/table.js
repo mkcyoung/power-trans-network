@@ -20,19 +20,19 @@ class Table{
                 'sorted': false
             },
             {
-                'key':"Location",
+                'key':"location",
                 'sorted': false
             },
             {
-                'key': "Energy",
+                'key': "energy",
                 'sorted': false
             },
             {
-                'key': "Power",
+                'key': "power",
                 'sorted': false
             },
             {
-                'key':'Speed',
+                'key':'speed',
                 'sorted': false
             }
         ];
@@ -83,6 +83,107 @@ class Table{
     
 
     //Implement sorting
+    // Binding headers column data to pre-existing html headers
+    let headers = d3.select("thead").select("tr").selectAll("div")
+        .data(this.tableHeaders);
+
+    headers
+        .on("click", (d, i) => {
+
+            //BEB
+            if (i == 0) {
+                if (d.sorted === false) {
+                    let newData = this.BEB.sort((a, b) => {
+                        return a.BusID > b.BusID ? -1 : 1;
+                    });
+                    //console.log(newData);
+                    d.sorted = true;
+                    this.updateTable(newData);
+                } else {
+                    let newData = this.BEB.sort((a, b) => {
+                        return a.BusID < b.BusID ? -1 : 1;
+                    });
+                    d.sorted = false;
+                    this.updateTable(newData);
+                }
+            }
+
+            //location
+            if (i == 1) {
+                if (d.sorted === false) {
+                    let newData = this.BEB.sort((a, b) => {
+                        return a.Location[this.activeTime] > b.Location[this.activeTime] ? -1 : 1;
+                    });
+                    d.sorted = true;
+                    this.updateTable(newData);
+                } else {
+                    let newData = this.BEB.sort((a, b) => {
+                        return a.Location[this.activeTime] < b.Location[this.activeTime] ? -1 : 1;
+                    });
+                    d.sorted = false;
+                    this.updateTable(newData);
+                }
+            }
+
+            //energy
+            if (i == 2) {
+                if (d.sorted === false) {
+                    let newData = this.BEB.sort((a, b) => {
+                        return (parseInt(a.percent_of_d_speeches) + parseInt(a.percent_of_r_speeches)) > (parseInt(b.percent_of_d_speeches) + parseInt(b.percent_of_r_speeches)) ? -1 : 1;
+                    });
+                    d.sorted = true;
+                    this.updateTable(newData);
+                } else {
+                    let newData = this.BEB.sort((a, b) => {
+                        return (parseInt(a.percent_of_d_speeches) + parseInt(a.percent_of_r_speeches)) < (parseInt(b.percent_of_d_speeches) + parseInt(b.percent_of_r_speeches)) ? -1 : 1;
+                    });
+                    d.sorted = false;
+                    this.updateTable(newData);
+                }
+            }
+
+            //power
+            if (i == 3) {
+                if (d.sorted === false) {
+                    let newData = this.BEB.sort((a, b) => {
+                        return parseInt(a.total) > parseInt(b.total) ? -1 : 1;
+                    });
+                    d.sorted = true;
+                    this.updateTable(newData);
+                } else {
+                    let newData = this.BEB.sort((a, b) => {
+                        return parseInt(a.total) < parseInt(b.total) ? -1 : 1;
+                    });
+                    d.sorted = false;
+                    this.updateTable(newData);
+                }
+            }
+
+            //speed
+            if (i == 3) {
+                if (d.sorted === false) {
+                    let newData = this.BEB.sort((a, b) => {
+                        return parseInt(a.total) > parseInt(b.total) ? -1 : 1;
+                    });
+                    d.sorted = true;
+                    this.updateTable(newData);
+                } else {
+                    let newData = this.BEB.sort((a, b) => {
+                        return parseInt(a.total) < parseInt(b.total) ? -1 : 1;
+                    });
+                    d.sorted = false;
+                    this.updateTable(newData);
+                }
+            }
+
+    });
+
+
+
+
+
+
+
 
     this.updateTable(this.BEB);
     }
@@ -162,9 +263,9 @@ class Table{
             .text((d) => {
                 let speed_list = [];
                 //console.log(d)
-                if(d.Location[that.activeTime] == undefined){
+                if(d.Location[that.activeTime] == "On the road"){
                     d3.entries(d.Speeds).forEach( f => {
-                        console.log(f.value[that.activeTime].value)
+                        //console.log(f.value[that.activeTime].value)
                         speed_list.push(parseFloat(f.value[that.activeTime].value).toFixed(2))
                             // return console.log(f.value[that.activeTime].value)
                     })

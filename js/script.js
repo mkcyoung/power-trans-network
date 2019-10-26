@@ -127,6 +127,7 @@ Promise.all([
     //Adding station data to beb objects
     //console.log("Station Data: ",files[8])
 
+    //Adding location data
     files[8].forEach( (d, i) => {
         //console.log(d)
         bebs.forEach( (c,j) => {
@@ -137,6 +138,9 @@ Promise.all([
                     //return array with stations when bus is there and undefined when on the road
                     //Messy but... I'm too stupid to figure out an alternative 
                     (b.value == '1') ? c.Location[k] = d.StationName : c.Location[k] = c.Location[k];
+                    if (c.Location[k] == undefined){
+                        c.Location[k] = "On the road"
+                    }
                 })
 
             }
