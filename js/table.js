@@ -129,13 +129,13 @@ class Table{
             if (i == 2) {
                 if (d.sorted === false) {
                     let newData = this.BEB.sort((a, b) => {
-                        return (parseInt(a.percent_of_d_speeches) + parseInt(a.percent_of_r_speeches)) > (parseInt(b.percent_of_d_speeches) + parseInt(b.percent_of_r_speeches)) ? -1 : 1;
+                        return parseFloat(a.energy[this.activeTime].value) > parseFloat(b.energy[this.activeTime].value) ? -1 : 1;
                     });
                     d.sorted = true;
                     this.updateTable(newData);
                 } else {
                     let newData = this.BEB.sort((a, b) => {
-                        return (parseInt(a.percent_of_d_speeches) + parseInt(a.percent_of_r_speeches)) < (parseInt(b.percent_of_d_speeches) + parseInt(b.percent_of_r_speeches)) ? -1 : 1;
+                        return parseFloat(a.energy[this.activeTime].value) < parseFloat(b.energy[this.activeTime].value) ? -1 : 1;
                     });
                     d.sorted = false;
                     this.updateTable(newData);
@@ -146,13 +146,13 @@ class Table{
             if (i == 3) {
                 if (d.sorted === false) {
                     let newData = this.BEB.sort((a, b) => {
-                        return parseInt(a.total) > parseInt(b.total) ? -1 : 1;
+                        return parseFloat(a.power[this.activeTime].value) > parseFloat(b.power[this.activeTime].value) ? -1 : 1;
                     });
                     d.sorted = true;
                     this.updateTable(newData);
                 } else {
                     let newData = this.BEB.sort((a, b) => {
-                        return parseInt(a.total) < parseInt(b.total) ? -1 : 1;
+                        return parseFloat(a.power[this.activeTime].value) < parseFloat(b.power[this.activeTime].value) ? -1 : 1;
                     });
                     d.sorted = false;
                     this.updateTable(newData);
@@ -160,16 +160,16 @@ class Table{
             }
 
             //speed
-            if (i == 3) {
+            if (i == 4) {
                 if (d.sorted === false) {
                     let newData = this.BEB.sort((a, b) => {
-                        return parseInt(a.total) > parseInt(b.total) ? -1 : 1;
+                        return parseFloat(a.current_speed[this.activeTime]) > parseFloat(b.current_speed[this.activeTime]) ? -1 : 1;
                     });
                     d.sorted = true;
                     this.updateTable(newData);
                 } else {
                     let newData = this.BEB.sort((a, b) => {
-                        return parseInt(a.total) < parseInt(b.total) ? -1 : 1;
+                        return parseFloat(a.current_speed[this.activeTime]) < parseFloat(b.current_speed[this.activeTime]) ? -1 : 1;
                     });
                     d.sorted = false;
                     this.updateTable(newData);
@@ -260,18 +260,20 @@ class Table{
 
         // Speed
         rows.select(".speedR").select("text")
-            .text((d) => {
-                let speed_list = [];
+            .text((d,i) => {
                 //console.log(d)
+                let speed_list = [];
                 if(d.Location[that.activeTime] == "On the road"){
                     d3.entries(d.Speeds).forEach( f => {
                         //console.log(f.value[that.activeTime].value)
                         speed_list.push(parseFloat(f.value[that.activeTime].value).toFixed(2))
                             // return console.log(f.value[that.activeTime].value)
                     })
+                    d.current_speed[that.activeTime] = d3.max(speed_list).toString();
                     return d3.max(speed_list).toString()
                 }
                 else{
+                    d.current_speed[that.activeTime] = 0;
                     return "At stop"
                 }
                 

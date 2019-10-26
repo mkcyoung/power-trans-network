@@ -113,7 +113,8 @@ Promise.all([
             "power":null,
             "Stations": {},
             "Speeds": {},
-            "Location": {}
+            "Location": {},
+            "current_speed": {}
         })
     });
 
