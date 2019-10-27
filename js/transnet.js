@@ -2,13 +2,14 @@
 class TransNet {
 
     // Creates a Power Network object
-    constructor(data,bebs,time,table){
+    constructor(data,bebs,time,table,updateTime){
         //Assigning data variable
         //console.log(data)
         this.data = data;
         this.activeTime = time;
         this.bebs = bebs;
         this.table = table;
+        this.updateTime = updateTime;
 
         //Margins - the bostock way
         this.margin = {top: 20, right: 20, bottom: 20, left: 20};
@@ -90,6 +91,10 @@ class TransNet {
             .attr("height",this.height+this.margin.top+this.margin.bottom)
             .attr("width",this.width+this.margin.left+this.margin.right);
 
+        //Appending time bar
+        let time_bar = d3.select(".view1")
+            .append('div').attr('id', 'activeTime-bar');
+
         // TODO, my idea here is to make a little legend with all 3 of the color scales up
         //Create svg for color scale legend
         let scaleLegend =  d3.select(".view1").append("svg")
@@ -160,6 +165,9 @@ class TransNet {
         this.nodeLayer = netGroup.append("g")
             .attr("class", "nodes");
 
+
+        //Draw time bar
+        this.drawTimeBar();
       
     }
 
@@ -541,6 +549,45 @@ class TransNet {
 
     }
 
+      /**
+     * Draws the time bar and hooks up the events of time change
+     */
+    drawTimeBar() {
+        let that = this;
+
+        //Slider to change the activeTime of the data
+        //May want to adjust these values later
+        let timeScale = d3.scaleLinear().domain([1, 287]).range([30, 730]);
+
+        let timeSlider = d3.select('#activeTime-bar')
+            .append('div').classed('slider-wrap', true)
+            .append('input').classed('slider', true)
+            .attr('type', 'range')
+            .attr('min', 1)
+            .attr('max', 287)
+            .attr('value', this.activeTime);
+
+        let sliderLabel = d3.select('.slider-wrap')
+            .append('div').classed('slider-label', true)
+            .append('svg');
+
+        let sliderText = sliderLabel.append('text').text(this.activeTime);
+
+        sliderText.attr('x', timeScale(this.activeTime));
+        sliderText.attr('y', 25);
+
+        timeSlider.on('input', function() {
+            
+
+            // d3.select("#backtext")
+            //     .text(this.value);
+
+            sliderText.text(this.value);
+            sliderText.attr('x', timeScale(this.value));
+            that.updateTime(this.value);
+        });
+    }
+
     /**
      * Returns html that can be used to render the tooltip for nodes
      * @param data
@@ -556,15 +603,16 @@ class TransNet {
         return text;
     }
 
-    tooltipRenderS(data) {
+    tooltipRenderS(data,time) {
+        time = this.activeTime;
         let that = this;
         let text = null;
         text = "<h3>" + data.StationName + " ("+ data.StationNode.id +")</h3>";
         //Adds in relevant data
-        text = text + "<p> BEB Count: "+ data.BusData[that.activeTime].total+ " busses</p>";
-        text = text + "<p> Active Power : "+  parseFloat(data.chSP[that.activeTime].value).toFixed(2)+" kW</p>";
-        text = text + "<p> Active Load : "+  parseFloat(data.aLoad[that.activeTime].value).toFixed(2)+" kW</p>";
-        text = text + "<p> Voltage : "+  parseFloat(data.volt[that.activeTime].value).toFixed(2)+" kV</p>";
+        text = text + "<p> BEB Count: "+ data.BusData[time].total+ " busses</p>";
+        text = text + "<p> Active Power : "+  parseFloat(data.chSP[time].value).toFixed(2)+" kW</p>";
+        text = text + "<p> Active Load : "+  parseFloat(data.aLoad[time].value).toFixed(2)+" kW</p>";
+        text = text + "<p> Voltage : "+  parseFloat(data.volt[time].value).toFixed(2)+" kV</p>";
         return text;
     }
 

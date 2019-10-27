@@ -249,6 +249,18 @@ Promise.all([
 
     //console.log("Trans net: ",transNet);
 
+    function updateTime(time) {
+        //console.log(time)
+        transNetwork.activeTime = time;
+        transNetwork.updateNet();
+
+        powNetwork.activeTime = time;
+        powNetwork.updateNet();
+
+        table.activeTime = time;
+        table.createTable();
+    }
+
 
     let time = 50;
     // Pass data into table object
@@ -256,7 +268,7 @@ Promise.all([
     table.createTable();
 
     /** Pass data into TransNet class */
-    let transNetwork = new TransNet(transNet,bebs,time,table);
+    let transNetwork = new TransNet(transNet,bebs,time,table,updateTime);
     transNetwork.createNet();
     transNetwork.updateNet();
     

@@ -128,7 +128,7 @@ class PowNet {
         this.stationColor = d3.scaleOrdinal(d3.schemeSet3).domain(pow_stations);
 
 
-
+        //Creating svg selection
         let powSVG = d3.select(".view1").select("svg");
 
         let netGroup = powSVG.append("g")
@@ -155,8 +155,6 @@ class PowNet {
         //Create labels
         this.labelLayer = netGroup.append("g")
             .attr("class","labels");
-
-
 
     }
 
@@ -298,7 +296,6 @@ class PowNet {
             .attr("fill","black");
         
     }
-
 
     /**
      * Returns html that can be used to render the tooltip for nodes
