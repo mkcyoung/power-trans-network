@@ -4,7 +4,7 @@ class TransNet {
     // Creates a Power Network object
     constructor(data,bebs,time,table,updateTime){
         //Assigning data variable
-        //console.log(data)
+        console.log("Trans data:",data);
         this.data = data;
         this.activeTime = time;
         this.bebs = bebs;
@@ -16,6 +16,7 @@ class TransNet {
         this.width = 1200 - this.margin.left - this.margin.right;
         this.height = 900 - this.margin.top-this.margin.bottom; 
 
+        this.clicked = null; //my click selection - used for updating tooltip later
     }
 
     createNet(){
@@ -448,6 +449,10 @@ class TransNet {
             })
             //Updates table to consist of only busses at this station
             .on("click",function (d) {
+
+                //setting this so the tooltip updates on slider bar later
+                that.clicked = d;
+                //console.log("this.clicked",that.clicked)
                 //console.log(d.BusData[that.activeTime].busses)
                 let busses = d.BusData[that.activeTime].busses;
                 busses = busses.map((c) => parseInt(c))
@@ -585,6 +590,8 @@ class TransNet {
             sliderText.text(this.value);
             sliderText.attr('x', timeScale(this.value));
             that.updateTime(this.value);
+            d3.select("#s_tooltip_click")
+                    .html(that.tooltipRenderS(that.clicked));
         });
     }
 

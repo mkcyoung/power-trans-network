@@ -4,6 +4,7 @@ class PowNet {
     // Creates a Power Network object
     constructor(data,time){
         //Assigning data variable
+        console.log("pownet data:",data);
         this.data = data;
         this.activeTime = time;
 
