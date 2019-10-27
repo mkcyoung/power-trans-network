@@ -3,9 +3,10 @@
     font-family: "Avenir Next";
     display: grid;
     grid-template-columns: repeat(2, 450px) 200px 1fr;
-    grid-template-rows: 0.5fr 200px 200px 200px 200px 400px;
+    grid-template-rows: 0.5fr 125px 200px 200px 200px 200px 400px;
     grid-template-areas: 
             "title title title title "
+            "slider slider slider slider"
             "power power power table1 "
             "power power power table1 "
             "power power power table1  "
@@ -17,10 +18,9 @@
 
 .masthead{
     grid-area: title;
-    background: rgb(190, 190, 190);
     font-size: 50px;
     text-align: center;
-    font-weight: lighter;
+    font-weight: bolder;
 }
 
 .view1{
@@ -30,6 +30,10 @@
 
 .view2{
     grid-area: table1;
+}
+
+.viewsHead{
+    grid-area: slider;
 }
 
 
@@ -143,6 +147,12 @@
     color: #81849a;
 }
 
+.net_headers{
+    font-size: 30px;
+    position: absolute;
+    font-weight: lighter;
+}
+
 /* Table styling */
 
 /*Table styling*/
@@ -233,7 +243,9 @@ tbody tr:hover{
     opacity: 0.7;
     -webkit-transition: .2s;
     transition: opacity .2s;
-    margin-left: 20px
+    margin-left: 20px;
+    /* position: absolute;
+    left: 100px; */
 }
 
 .slider::-webkit-slider-thumb {
@@ -242,7 +254,7 @@ tbody tr:hover{
     width: 25px;
     height: 25px;
     border-radius: 50%;
-    background: #4CAF50;
+    background: rgb(97, 76, 175);
     cursor: pointer;
 }
 
@@ -269,7 +281,9 @@ tbody tr:hover{
 
 .slider-wrap {
     display: inline-block;
+    position: absolute;
     float: left;
     width: 750px;
-    margin-left: 50px;
+    left: 500px;
+    top: 100px;
 }

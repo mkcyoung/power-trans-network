@@ -284,7 +284,7 @@ class Table{
                     .style("opacity", 1);
                 d3.select("#s_tooltip").html(that.tooltipRenderB(d))
                     .style("left","800px") //(d3.event.pageX+30)
-                    .style("top", "100px"); //(d3.event.pageY-80)
+                    .style("top", "250px"); //(d3.event.pageY-80)
                 d3.selectAll("."+that.station_mapping[d.Location[that.activeTime]])
                     .classed("CHSP",true);
             })

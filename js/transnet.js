@@ -2,10 +2,11 @@
 class TransNet {
 
     // Creates a Power Network object
-    constructor(data,bebs,time,table,updateTime){
+    constructor(data,pow_data,bebs,time,table,updateTime){
         //Assigning data variable
         console.log("Trans data:",data);
         this.data = data;
+        this.pow_data = pow_data;
         this.activeTime = time;
         this.bebs = bebs;
         this.table = table;
@@ -73,18 +74,35 @@ class TransNet {
                 return parseFloat(f.value)
             }))
         }));
+
+        //Finding max/min of active power flow
+        let max_apf = d3.max(this.pow_data.links.map((d) => {
+            //console.log(d)
+            return d3.max(d.aPF.map(f => {
+                //console.log(f[1])
+                return parseFloat(f.value)
+            }))
+        }));
+        let min_apf = d3.min(this.pow_data.links.map((d) => {
+            //console.log(d)
+            return d3.min(d.aPF.map(f => {
+                //console.log(f[1])
+                return parseFloat(f.value)
+            }))
+        }));
         
 
         /** Set Scales  */
         //Make circle size scale for bus count
-        this.buscountScale = d3.scaleSqrt().domain([min_bus_count,max_bus_count]).range([7,22]);
+        this.buscountScale = d3.scaleSqrt().domain([min_bus_count,max_bus_count]).range([5,35]);
         this.powLoadScale = d3.scaleSequential(d3.interpolateViridis).domain([min_chsp,max_chsp]);
         //Setting custom max because the first node skews it - have this for color setting
-        this.aLoadScale = d3.scaleSequential(d3.interpolatePurples).domain([min_aload,400])
+        this.aLoadScale = d3.scaleSequential(d3.interpolatePurples).domain([min_aload,300])
         //Make an ordinal color scale for stations
         let pow_stations = ["n2","n13","n9","n33","n25","n31","n8"];
         this.stationColor = d3.scaleOrdinal(d3.schemeSet3).domain(pow_stations);
-
+        //Power links
+        this.apfScale = d3.scaleSequential(d3.interpolateBlues).domain([min_apf,max_apf]);
 
         //Select view1 and append an svg to it
         let powSVG = d3.select(".view1").append("svg")
@@ -93,40 +111,72 @@ class TransNet {
             .attr("width",this.width+this.margin.left+this.margin.right);
 
         //Appending time bar
-        let time_bar = d3.select(".view1")
+        let time_bar = d3.select(".viewsHead")
             .append('div').attr('id', 'activeTime-bar');
+
+         //Add text above nets
+        d3.select(".viewsHead").append("div")
+            .style("left","675px")
+            .style("top","175px")
+            .attr("class","net_headers")
+            .text("BEB charging stops");
+
+        d3.select(".viewsHead").append("div")
+            .style("left","200px")
+            .style("top","175px")
+            .attr("class","net_headers")
+            .text("power grid");
+
 
         // TODO, my idea here is to make a little legend with all 3 of the color scales up
         //Create svg for color scale legend
-        let scaleLegend =  d3.select(".view1").append("svg")
-            .attr("transform","translate(100,-200)");
+        let scaleLegendGroup =  powSVG.append("g")
+            .attr("transform","translate(100,700)")
+            .attr("id","scale_leg");
+
+        let scaleLegend = scaleLegendGroup
+            .append("svg");
+
         let defs = scaleLegend.append('defs');
         //Append a linearGradient element to the defs and give it a unique id
         let linearGradient_AL = defs.append("linearGradient")
             .attr("id", "linear-gradient-AL");
         let linearGradient_CP = defs.append("linearGradient")
             .attr("id", "linear-gradient-CP");
+        let linearGradient_apF = defs.append("linearGradient")
+            .attr("id", "linear-gradient-apF");
         
         this.scaleLegender(linearGradient_AL,this.aLoadScale)
         this.scaleLegender(linearGradient_CP,this.powLoadScale)
+        this.scaleLegender(linearGradient_apF,this.apfScale)
 
         //Draw the rectangle and fill with gradient
         scaleLegend.append("rect")
             .attr("width", 200)
             .attr("height", 20)
+            .attr("transform","translate(460,15)")
+            .style("fill", "url(#linear-gradient-CP)");
+
+        //Draw the rectangle and fill with gradient
+        scaleLegend.append("rect")
+            .attr("width", 200)
+            .attr("height", 20)
+            .attr("transform","translate(200,30)")
             .style("fill", "url(#linear-gradient-AL)");
 
         //Draw the rectangle and fill with gradient
         scaleLegend.append("rect")
             .attr("width", 200)
             .attr("height", 20)
-            .attr("transform","translate(0,30)")
-            .style("fill", "url(#linear-gradient-CP)");
+            .attr("transform","translate(200,0)")
+            .style("fill", "url(#linear-gradient-apF)");
+
 
         /** Charging station interface */
         let CSGroup = powSVG.append("g")
             .attr("transform","translate("+(this.width/2-70)+","+this.margin.top+")");
 
+        //Bus net
         let netGroup = powSVG.append("g")
             .attr("transform","translate("+(this.width/2 + 60)+","+this.margin.top+")");
 
@@ -352,7 +402,7 @@ class TransNet {
                     .style("opacity", 1);
                 d3.select("#s_tooltip").html(that.tooltipRenderS(d))
                     .style("left","800px") //(d3.event.pageX+30)
-                    .style("top", "100px"); //(d3.event.pageY-80)
+                    .style("top", "250px"); //(d3.event.pageY-80)
                 d3.selectAll("."+d.StationNode.id)
                     .attr("fill", d => { return (d.id != undefined) ? that.stationColor(d.id) : that.stationColor(d.StationNode.id)})
                     .classed("CHSP",true);
@@ -468,7 +518,7 @@ class TransNet {
                     .style("opacity", 1);
                 d3.select("#s_tooltip_click").html(that.tooltipRenderS(d))
                     .style("left","800px") //(d3.event.pageX+30)
-                    .style("top", "100px"); //(d3.event.pageY-80)
+                    .style("top", "250px"); //(d3.event.pageY-80)
                 
                 //Want to removes netlines
                 d3.selectAll(".netlineclick").remove();
@@ -590,8 +640,11 @@ class TransNet {
             sliderText.text(this.value);
             sliderText.attr('x', timeScale(this.value));
             that.updateTime(this.value);
-            d3.select("#s_tooltip_click")
+            if(that.clicked != null){
+                d3.select("#s_tooltip_click")
                     .html(that.tooltipRenderS(that.clicked));
+            }
+            
         });
     }
 
