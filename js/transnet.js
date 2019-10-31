@@ -676,6 +676,7 @@ class TransNet {
         return text;
     }
 
+    //** Got the idea from: https://observablehq.com/@tmcw/d3-scalesequential-continuous-color-legend-example */
     scaleLegender(linearGradient,colorScale){
 
         linearGradient.selectAll("stop")
