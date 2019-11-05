@@ -70,9 +70,9 @@ class Table{
 
 
     //Scales
-    this.energybarScale = d3.scaleLinear().domain([0,max_energy]).range([this.margin.left,this.width-this.margin.right]);
+    this.energybarScale = d3.scaleLinear().domain([min_energy,max_energy]).range([this.margin.left,this.width-this.margin.right]);
     this.energyColorScale = d3.scaleSequential(d3.interpolateReds).domain([min_energy,max_energy]);
-    this.powerBarScale = d3.scaleLinear().domain([0,max_power]).range([this.margin.left,this.width-this.margin.right]);
+    this.powerBarScale = d3.scaleLinear().domain([min_power,max_power]).range([this.margin.left,this.width-this.margin.right]);
     this.powerColorScale = d3.scaleSequential(d3.interpolateBlues).domain([min_power,max_power]);
     //Make an ordinal color scale for stations
     let pow_stations = ["OTTC","KJTC","CTH","JRPR","KPR","EH","GS"];

@@ -660,8 +660,8 @@ class TransNet {
             d3.selectAll(".netlineclick").remove();
 
             }
-            //Sets clicked to null
-            that.clicked = null;
+            // //Sets clicked to null
+            // that.clicked = null;
 
         }, true);
 
