@@ -287,3 +287,9 @@ tbody tr:hover{
     left: 500px;
     top: 100px;
 }
+
+/* Scale Legend */
+#scale_leg{
+    font-size: 12pt;
+    font-weight: lighter;
+}

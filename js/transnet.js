@@ -150,26 +150,38 @@ class TransNet {
         this.scaleLegender(linearGradient_CP,this.powLoadScale)
         this.scaleLegender(linearGradient_apF,this.apfScale)
 
-        //Draw the rectangle and fill with gradient
-        scaleLegend.append("rect")
+        //Draw the rectangle and fill with gradient (Active Power (powLoad))
+        let powLoadG = scaleLegend.append("g")
+            .attr("transform","translate(460,15)");
+        powLoadG.append("rect")
             .attr("width", 200)
             .attr("height", 20)
-            .attr("transform","translate(460,15)")
-            .style("fill", "url(#linear-gradient-CP)");
+            .style("fill", "url(#linear-gradient-CP)")
+        powLoadG.append("text")
+            .attr("y",35)
+            .text("active power (kW)");
 
-        //Draw the rectangle and fill with gradient
-        scaleLegend.append("rect")
+        //Draw the rectangle and fill with gradient (Active load)
+        let aLoadG = scaleLegend.append("g")
+            .attr("transform","translate(200,40)");
+        aLoadG.append("rect")
             .attr("width", 200)
             .attr("height", 20)
-            .attr("transform","translate(200,30)")
             .style("fill", "url(#linear-gradient-AL)");
+        aLoadG.append("text")
+            .attr("y",35)
+            .text("active load (kW)");
 
-        //Draw the rectangle and fill with gradient
-        scaleLegend.append("rect")
+        //Draw the rectangle and fill with gradient (active power flow)
+        let aPFG = scaleLegend.append("g")
+            .attr("transform","translate(200,0)");
+        aPFG.append("rect")
             .attr("width", 200)
             .attr("height", 20)
-            .attr("transform","translate(200,0)")
             .style("fill", "url(#linear-gradient-apF)");
+        aPFG.append("text")
+            .attr("y",35)
+            .text("active power flow (kW)");
 
 
         /** Charging station interface */
