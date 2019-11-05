@@ -168,7 +168,7 @@ class PowNet {
             .classed("link",true)
             .attr("stroke-width",d=>this.currentScale(d.current[this.activeTime].value))
             .attr("stroke",d=>{
-                if ((d.current[this.activeTime].value/d.mLC) > 0.75){
+                if ((d.current[this.activeTime].value/d.mLC) > 0.9){
                     return "red"
                 } 
                 else{

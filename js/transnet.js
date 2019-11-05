@@ -160,6 +160,20 @@ class TransNet {
         powLoadG.append("text")
             .attr("y",35)
             .text("active power (kW)");
+        powLoadG.append("text")
+            .attr("x",150)
+            .attr("y",15)
+            .attr("fill","white")
+            .style("font-weight","light")
+            .text(`${max_chsp.toFixed(1)}`);
+        powLoadG.append("text")
+            .attr("x",5)
+            .attr("y",15)
+            .attr("fill","white")
+            .style("font-weight","light")
+            .text(`${min_chsp.toFixed(1)}`);
+
+
 
         //Draw the rectangle and fill with gradient (Active load)
         let aLoadG = scaleLegend.append("g")
@@ -171,6 +185,18 @@ class TransNet {
         aLoadG.append("text")
             .attr("y",35)
             .text("active load (kW)");
+        aLoadG.append("text")
+            .attr("x",5)
+            .attr("y",15)
+            .attr("fill","grey")
+            .style("font-weight","light")
+            .text(`${min_aload.toFixed(1)}`);
+        aLoadG.append("text")
+            .attr("x",150)
+            .attr("y",15)
+            .attr("fill","white")
+            .style("font-weight","light")
+            .text(`${max_aload.toFixed(1)}`);
 
         //Draw the rectangle and fill with gradient (active power flow)
         let aPFG = scaleLegend.append("g")
@@ -182,7 +208,18 @@ class TransNet {
         aPFG.append("text")
             .attr("y",35)
             .text("active power flow (kW)");
-
+        aPFG.append("text")
+            .attr("x",5)
+            .attr("y",15)
+            .attr("fill","grey")
+            .style("font-weight","light")
+            .text(`${min_apf.toFixed(1)}`);
+        aPFG.append("text")
+            .attr("x",150)
+            .attr("y",15)
+            .attr("fill","white")
+            .style("font-weight","light")
+            .text(`${max_apf.toFixed(1)}`);
 
         /** Charging station interface */
         let CSGroup = powSVG.append("g")
