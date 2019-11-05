@@ -273,6 +273,12 @@ class TransNet {
 
     updateNet(){
         let that = this;
+        
+        //Updates table with clicked seletion
+        if(that.clicked != null){
+            Clicked(that.clicked);
+        }
+
         // Now let's create the lines
         let links = this.linkLayer.selectAll("line")
             .data(this.data.links)
@@ -547,90 +553,96 @@ class TransNet {
 
             })
             //Updates table to consist of only busses at this station
-            .on("click",function (d) {
+            .on("click", Clicked);
 
-                //setting this so the tooltip updates on slider bar later
-                that.clicked = d;
-                //console.log("this.clicked",that.clicked)
-                //console.log(d.BusData[that.activeTime].busses)
-                let busses = d.BusData[that.activeTime].busses;
-                busses = busses.map((c) => parseInt(c))
-                //console.log(busses)
-                let newData = that.bebs.filter((f,i) => busses.includes(f.BusID));
-                //console.log(newData)
-                that.table.BEB = newData;
-                that.table.updateTable();
+        
+        //Clicked function
+        function Clicked(d) {
+            console.log("in clicked")
 
-                //Want to keep lines connecting other nodes and tooltip (copied from above - should make this a function)
-                d3.select("#s_tooltip_click").transition()
-                    .duration(200)
-                    .style("opacity", 1);
-                d3.select("#s_tooltip_click").html(that.tooltipRenderS(d))
-                    .style("left","800px") //(d3.event.pageX+30)
-                    .style("top", "250px"); //(d3.event.pageY-80)
-                
-                //Want to removes netlines
-                d3.selectAll(".netlineclick").remove();
-                d3.selectAll(".netline").remove();
+            //setting this so the tooltip updates on slider bar later - as well as table
+            that.clicked = d;
+            //console.log("this.clicked",that.clicked)
+            //console.log(d.BusData[that.activeTime].busses)
+            let busses = d.BusData[that.activeTime].busses;
+            busses = busses.map((c) => parseInt(c))
+            //console.log(busses)
+            let newData = that.bebs.filter((f,i) => busses.includes(f.BusID));
+            //console.log(newData)
+            that.table.BEB = newData;
+            that.table.updateTable();
 
-                //Creating lines that connect node to power station
-                let lineFunction = d3.line()
-                    .x(function(d){
-                        return d.x;
-                    })
-                    .y(function(d){
-                        return d.y;
-                    });
-                
-                let line_data = null;
-                let line_data2 = null;
-                
-                switch(parseInt(d.StationID)){
-                    case 1:
-                       line_data = that.lineOTTC;
-                       line_data2 = that.lineOTTC2;
-                       break;
-                    case 2:
-                        line_data = that.lineKJTC;
-                        line_data2 = that.lineKJTC2;
-                        break;
-                    case 3:
-                        line_data = that.lineCTH;
-                        line_data2 = that.lineCTH2;
-                        break;
-                    case 4:
-                        line_data = that.lineJRPR;
-                        line_data2 = that.lineJRPR2;
-                        break;
-                    case 5:
-                        line_data = that.lineKPR;
-                        line_data2 = that.lineKPR2;
-                        break;
-                    case 6:
-                        line_data = that.lineEH;
-                        line_data2 = that.lineEH2;
-                        break;
-                    case 7:
-                        line_data = that.lineGS;
-                        line_data2 = that.lineGS2;
-                        break;
-                }
+            //Want to keep lines connecting other nodes and tooltip (copied from above - should make this a function)
+            d3.select("#s_tooltip_click").transition()
+                .duration(200)
+                .style("opacity", 1);
+            d3.select("#s_tooltip_click").html(that.tooltipRenderS(d))
+                .style("left","800px") //(d3.event.pageX+30)
+                .style("top", "250px"); //(d3.event.pageY-80)
+            
+            //Want to removes netlines
+            d3.selectAll(".netlineclick").remove();
+            d3.selectAll(".netline").remove();
 
-                //Path to trans
-                let path = that.lineLayer.append("path")
-                    .attr("class","netlineclick")
-                    .attr("stroke","black")
-                    .attr("stroke-width",0.5)
-                    .attr("fill","none")
-                    .attr("d",lineFunction(line_data));
+            //Creating lines that connect node to power station
+            let lineFunction = d3.line()
+                .x(function(d){
+                    return d.x;
+                })
+                .y(function(d){
+                    return d.y;
+                });
+            
+            let line_data = null;
+            let line_data2 = null;
+            
+            switch(parseInt(d.StationID)){
+                case 1:
+                   line_data = that.lineOTTC;
+                   line_data2 = that.lineOTTC2;
+                   break;
+                case 2:
+                    line_data = that.lineKJTC;
+                    line_data2 = that.lineKJTC2;
+                    break;
+                case 3:
+                    line_data = that.lineCTH;
+                    line_data2 = that.lineCTH2;
+                    break;
+                case 4:
+                    line_data = that.lineJRPR;
+                    line_data2 = that.lineJRPR2;
+                    break;
+                case 5:
+                    line_data = that.lineKPR;
+                    line_data2 = that.lineKPR2;
+                    break;
+                case 6:
+                    line_data = that.lineEH;
+                    line_data2 = that.lineEH2;
+                    break;
+                case 7:
+                    line_data = that.lineGS;
+                    line_data2 = that.lineGS2;
+                    break;
+                    
+            }
 
-                let path2 = that.lineLayer.append("path")
-                    .attr("class","netlineclick")
-                    .attr("stroke","black")
-                    .attr("stroke-width",0.5)
-                    .attr("fill","none")
-                    .attr("d",lineFunction(line_data2));
-            });;
+            //Path to trans
+            let path = that.lineLayer.append("path")
+                .attr("class","netlineclick")
+                .attr("stroke","black")
+                .attr("stroke-width",0.5)
+                .attr("fill","none")
+                .attr("d",lineFunction(line_data));
+
+            let path2 = that.lineLayer.append("path")
+                .attr("class","netlineclick")
+                .attr("stroke","black")
+                .attr("stroke-width",0.5)
+                .attr("fill","none")
+                .attr("d",lineFunction(line_data2));
+        }
 
         // This clears a selection by listening for a click
         document.addEventListener("click", function(e) {
@@ -648,6 +660,8 @@ class TransNet {
             d3.selectAll(".netlineclick").remove();
 
             }
+            //Sets clicked to null
+            that.clicked = null;
 
         }, true);
 
@@ -685,15 +699,14 @@ class TransNet {
 
             // d3.select("#backtext")
             //     .text(this.value);
-
             sliderText.text(this.value);
             sliderText.attr('x', timeScale(this.value));
             that.updateTime(this.value);
             if(that.clicked != null){
+                //Updatiting tooltip
                 d3.select("#s_tooltip_click")
                     .html(that.tooltipRenderS(that.clicked));
             }
-            
         });
     }
 
