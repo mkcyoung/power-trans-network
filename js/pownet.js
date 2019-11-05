@@ -167,7 +167,14 @@ class PowNet {
             .join("line")
             .classed("link",true)
             .attr("stroke-width",d=>this.currentScale(d.current[this.activeTime].value))
-            .attr("stroke",d=>this.apfscale(d.aPF[this.activeTime].value))
+            .attr("stroke",d=>{
+                if ((d.current[this.activeTime].value/d.mLC) > 0.75){
+                    return "red"
+                } 
+                else{
+                    return this.apfscale(d.aPF[this.activeTime].value)
+                }
+            })
             //tooltip!
             .on("mouseover", function (d) {
                 d3.select("#tooltip").transition()
