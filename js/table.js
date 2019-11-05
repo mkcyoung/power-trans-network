@@ -37,43 +37,42 @@ class Table{
             }
         ];
 
+         //Set-up scales etc. 
+    
+        //Finding max/min of BEB energy
+        this.max_energy = d3.max(this.BEB.map((d) => {
+            return d3.max(d.energy.map((d)=>{
+                return parseInt(d.value)
+            }))
+        }));
+        this.min_energy = d3.min(this.BEB.map((d) => {
+            return d3.min(d.energy.map((d)=>{
+                return parseInt(d.value)
+            }))
+        }));
+        //console.log(this.max_energy,this.min_energy);
+        //Finding max/min of BEB power
+        this.max_power = d3.max(this.BEB.map((d) => {
+            return d3.max(d.power.map((d)=>{
+                return parseInt(d.value)
+            }))
+        }));
+        this.min_power = d3.min(this.BEB.map((d) => {
+            return d3.min(d.power.map((d)=>{
+                return parseInt(d.value)
+            }))
+        }));
+
 
     }
 
     createTable(){
 
-    //Set-up scales etc. 
-    
-    //Finding max/min of BEB energy
-    let max_energy = d3.max(this.BEB.map((d) => {
-        return d3.max(d.energy.map((d)=>{
-            return parseInt(d.value)
-        }))
-    }));
-    let min_energy = d3.min(this.BEB.map((d) => {
-        return d3.min(d.energy.map((d)=>{
-            return parseInt(d.value)
-        }))
-    }));
-    //console.log(max_energy,min_energy);
-    //Finding max/min of BEB power
-    let max_power = d3.max(this.BEB.map((d) => {
-        return d3.max(d.power.map((d)=>{
-            return parseInt(d.value)
-        }))
-    }));
-    let min_power = d3.min(this.BEB.map((d) => {
-        return d3.min(d.power.map((d)=>{
-            return parseInt(d.value)
-        }))
-    }));
-
-
     //Scales
-    this.energybarScale = d3.scaleLinear().domain([min_energy,max_energy]).range([this.margin.left,this.width-this.margin.right]);
-    this.energyColorScale = d3.scaleSequential(d3.interpolateReds).domain([min_energy,max_energy]);
-    this.powerBarScale = d3.scaleLinear().domain([min_power,max_power]).range([this.margin.left,this.width-this.margin.right]);
-    this.powerColorScale = d3.scaleSequential(d3.interpolateBlues).domain([min_power,max_power]);
+    this.energybarScale = d3.scaleLinear().domain([this.min_energy,this.max_energy]).range([this.margin.left,this.width-this.margin.right]);
+    this.energyColorScale = d3.scaleSequential(d3.interpolateReds).domain([this.min_energy,this.max_energy]);
+    this.powerBarScale = d3.scaleLinear().domain([this.min_power,this.max_power]).range([this.margin.left,this.width-this.margin.right]);
+    this.powerColorScale = d3.scaleSequential(d3.interpolateBlues).domain([this.min_power,this.max_power]);
     //Make an ordinal color scale for stations
     let pow_stations = ["OTTC","KJTC","CTH","JRPR","KPR","EH","GS"];
     let pow_stations_nodes = ["n2","n13","n9","n33","n25","n31","n8"];

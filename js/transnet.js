@@ -558,7 +558,7 @@ class TransNet {
         
         //Clicked function
         function Clicked(d) {
-            console.log("in clicked")
+            //console.log("in clicked")
 
             //setting this so the tooltip updates on slider bar later - as well as table
             that.clicked = d;
@@ -659,10 +659,10 @@ class TransNet {
             //Remove net lines
             d3.selectAll(".netlineclick").remove();
 
+            //Sets clicked to null
+            that.clicked = null;
             }
-            // //Sets clicked to null
-            // that.clicked = null;
-
+        
         }, true);
 
     }
