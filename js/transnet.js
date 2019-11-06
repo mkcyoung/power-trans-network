@@ -746,6 +746,12 @@ class TransNet {
         let powStatSvg = lineSvg.append("g");
             // .attr("transform",`translate(${this.marginL.left},${this.marginL.top})`);
 
+        //Create label for group
+        powStatSvg.append("text")
+            .attr("class","chart-text")
+            .attr("x",100)
+            .attr("y",40);
+
         // Scales for line chart
         let yScale = this.powLoadLineScale;
         let xScale = this.timeScale;
@@ -823,6 +829,11 @@ class TransNet {
             .attr("stroke-linejoin", "round")
             .attr("stroke-linecap", "round")
             .attr("d", line);
+
+        //Line chart label
+        d3.select(".chart-text")
+            .attr("stroke","black")
+            .text(`${that.clicked.StationName}`);
 
         
     }
