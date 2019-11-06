@@ -289,6 +289,7 @@ class TransNet {
         //Updates table with clicked seletion
         if(that.clicked != null){
             Clicked(that.clicked);
+            that.updateLine();
         }
 
         // Now let's create the lines
@@ -571,9 +572,13 @@ class TransNet {
         //Clicked function
         function Clicked(d) {
             //console.log("in clicked")
-
             //setting this so the tooltip updates on slider bar later - as well as table
             that.clicked = d;
+
+            //Call update line
+            that.updateLine();
+
+
             //console.log("this.clicked",that.clicked)
             //console.log(d.BusData[that.activeTime].busses)
             let busses = d.BusData[that.activeTime].busses;
@@ -673,6 +678,9 @@ class TransNet {
 
             //Sets clicked to null
             that.clicked = null;
+
+            //Clear path from line chart
+            d3.selectAll(".line-path").style("visibility","hidden");
             }
         
         }, true);
@@ -724,7 +732,7 @@ class TransNet {
 
     /** Creates a line chart */
     createLine(){
-        console.log("data in line:",this.data.nodes[0].chSP[200].value)
+        console.log("data in line:",this.data.nodes[0])
 
         let that = this;
 
@@ -753,19 +761,19 @@ class TransNet {
 
         //Gridlines
         // gridlines in y axis function 
-        function make_y_gridlines() {		
-            return d3.axisLeft(yScale)
-                .ticks(5)
-        }
+        // function make_y_gridlines() {		
+        //     return d3.axisLeft(yScale)
+        //         .ticks(5)
+        // }
 
-        // add the Y gridlines
-        powStatSvg.append("g")			
-            .attr("class", "grid")
-            .attr("transform",`translate(${this.marginL.left},0)`)
-            .call(make_y_gridlines()
-                .tickSize(-(this.widthL))
-                .tickFormat("")
-            );
+        // // add the Y gridlines
+        // powStatSvg.append("g")			
+        //     .attr("class", "grid")
+        //     .attr("transform",`translate(${this.marginL.left},0)`)
+        //     .call(make_y_gridlines()
+        //         .tickSize(-(this.widthL))
+        //         .tickFormat("")
+        //     );
 
         //X-axis
         powStatSvg.append("g")
@@ -791,18 +799,12 @@ class TransNet {
 
         //Drawing path
         powStatSvg.append("path")
-            .attr("class","line-path")
-            .datum(this.data.nodes[0].chSP.slice(0,that.activeTime))
-            .attr("fill", "none")
-            .attr("stroke", "steelblue")
-            .attr("stroke-width", 1.5)
-            .attr("stroke-linejoin", "round")
-            .attr("stroke-linecap", "round")
-            .attr("d", line);
-
+            .attr("class","line-path");
     }
 
     updateLine(){
+        let that = this;
+        //console.log("that.clicked in update line",this.clicked)
 
         //Making line function
         let line = d3.line()
@@ -811,11 +813,12 @@ class TransNet {
             .x((d,i) => this.timeScale(i))
             .y(d => this.powLoadLineScale(d.value));
 
-            
+
         d3.select(".line-path")
-            .datum(this.data.nodes[0].chSP.slice(0,this.activeTime))
+            .datum(this.data.nodes[that.clicked.index].chSP.slice(0,this.activeTime))
+            .style("visibility","visible")
             .attr("fill", "none")
-            .attr("stroke", "steelblue")
+            .attr("stroke", `${that.stationColor(that.clicked.StationNode.id)}`)//d => that.stationColor(d.StationNode.id))
             .attr("stroke-width", 1.5)
             .attr("stroke-linejoin", "round")
             .attr("stroke-linecap", "round")
