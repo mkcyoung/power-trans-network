@@ -72,16 +72,16 @@ class Table{
     this.energybarScale = d3.scaleLinear().domain([this.min_energy,this.max_energy]).range([this.margin.left,this.width-this.margin.right]);
     this.energyColorScale = d3.scaleSequential(d3.interpolateReds).domain([this.min_energy,this.max_energy]);
     this.powerBarScale = d3.scaleLinear().domain([this.min_power,this.max_power]).range([this.margin.left,this.width-this.margin.right]);
-    this.powerColorScale = d3.scaleSequential(d3.interpolateBlues).domain([this.min_power,this.max_power]);
+    this.powerColorScale = d3.scaleSequential(d3.interpolatePurples).domain([this.min_power,this.max_power]);
     //Make an ordinal color scale for stations
     let pow_stations = ["OTTC","KJTC","CTH","JRPR","KPR","EH","GS"];
     let pow_stations_nodes = ["n2","n13","n9","n33","n25","n31","n8"];
     this.station_mapping = {};
     pow_stations.forEach((pow_stations, i) => this.station_mapping[pow_stations] = pow_stations_nodes[i]);
     //console.log(station_mapping);
-    this.stationColor = d3.scaleOrdinal(d3.schemeSet3).domain(pow_stations);
+    this.stationColor = d3.scaleOrdinal(d3.schemeTableau10).domain(pow_stations);
     //Have to make a separate scale  with nodes as range b/c I'm a sloppy mthrfker
-    this.stationColorNodes = d3.scaleOrdinal(d3.schemeSet3).domain(pow_stations_nodes);
+    this.stationColorNodes = d3.scaleOrdinal(d3.schemeTableau10).domain(pow_stations_nodes);
     //Create axes
     
 

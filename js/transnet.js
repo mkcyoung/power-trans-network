@@ -112,7 +112,7 @@ class TransNet {
         this.aLoadScale = d3.scaleSequential(d3.interpolatePurples).domain([min_aload,300])
         //Make an ordinal color scale for stations
         let pow_stations = ["n2","n13","n9","n33","n25","n31","n8"];
-        this.stationColor = d3.scaleOrdinal(d3.schemeSet3).domain(pow_stations);
+        this.stationColor = d3.scaleOrdinal(d3.schemeTableau10).domain(pow_stations);
         //Power links
         this.apfScale = d3.scaleSequential(d3.interpolateBlues).domain([min_apf,max_apf]);
 
@@ -681,7 +681,10 @@ class TransNet {
 
             //Clear path from line chart
             d3.selectAll(".line-path").style("visibility","hidden");
+            d3.selectAll(".chart-text").style("visibility","hidden");
             }
+            
+            
         
         }, true);
 
@@ -749,9 +752,23 @@ class TransNet {
         //Create label for group
         powStatSvg.append("text")
             .attr("class","chart-text")
-            .attr("x",100)
-            .attr("y",40);
+            .attr("x",850)
+            .attr("y",60);
 
+        //Create labels for axes
+        powStatSvg.append("text")
+            .attr("class","axis-text")
+            .attr("x",70)
+            .attr("y",23)
+            .text("active power (kW)");
+        
+        powStatSvg.append("text")
+            .attr("class","axis-text")
+            .attr("x",950)
+            .attr("y",380)
+            .text("intervals");
+
+        
         // Scales for line chart
         let yScale = this.powLoadLineScale;
         let xScale = this.timeScale;
@@ -825,14 +842,14 @@ class TransNet {
             .style("visibility","visible")
             .attr("fill", "none")
             .attr("stroke", `${that.stationColor(that.clicked.StationNode.id)}`)//d => that.stationColor(d.StationNode.id))
-            .attr("stroke-width", 1.5)
+            .attr("stroke-width", 4)
             .attr("stroke-linejoin", "round")
             .attr("stroke-linecap", "round")
             .attr("d", line);
 
         //Line chart label
         d3.select(".chart-text")
-            .attr("stroke","black")
+            .style("visibility","visible")
             .text(`${that.clicked.StationName}`);
 
         

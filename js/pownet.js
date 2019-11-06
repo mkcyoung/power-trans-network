@@ -126,7 +126,7 @@ class PowNet {
         this.apfscale = d3.scaleSequential(d3.interpolateBlues).domain([min_apf,max_apf]);
         //Make an ordinal color scale for stations
         let pow_stations = ["n2","n13","n9","n33","n25","n31","n8"];
-        this.stationColor = d3.scaleOrdinal(d3.schemeSet3).domain(pow_stations);
+        this.stationColor = d3.scaleOrdinal(d3.schemeTableau10).domain(pow_stations);
 
 
         //Creating svg selection

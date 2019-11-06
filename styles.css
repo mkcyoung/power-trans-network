@@ -237,8 +237,8 @@ tbody tr:hover{
 .locationR{
     font-weight: bolder;
     font-size: 20px;
-    -webkit-text-stroke-width: 0.5px;
-    -webkit-text-stroke-color: rgb(80, 80, 80);
+    /* -webkit-text-stroke-width: 0.5px;
+    -webkit-text-stroke-color: rgb(80, 80, 80); */
 }
 
 .busID{
@@ -344,4 +344,21 @@ tbody tr:hover{
     fill: none;
     stroke: none;
     shape-rendering: crispEdges;
+}
+
+/* .line-path{
+
+} */
+
+.chart-text{
+    font-size: 60px;
+    font-weight: bolder;
+    stroke: none;
+    fill: rgba(211, 211, 211, 0.678);
+}
+
+.axis-text{
+    font-size: 12px;
+    font-weight: bold;
+    fill: rgba(0, 0, 0, 0.678);
 }
