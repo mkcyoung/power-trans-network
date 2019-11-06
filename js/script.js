@@ -253,6 +253,7 @@ Promise.all([
         //console.log(time)
         transNetwork.activeTime = time;
         transNetwork.updateNet();
+        transNetwork.updateLine();
 
         powNetwork.activeTime = time;
         powNetwork.updateNet();

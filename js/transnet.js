@@ -726,6 +726,8 @@ class TransNet {
     createLine(){
         console.log("data in line:",this.data.nodes[0].chSP[200].value)
 
+        let that = this;
+
         //Create line chart svg
         let lineSvg = d3.select(".view3").append("svg")
                             .attr("class","lineSvg")
@@ -787,18 +789,42 @@ class TransNet {
             .x((d,i) => this.timeScale(i))
             .y(d => this.powLoadLineScale(d.value));
 
+        //Drawing path
         powStatSvg.append("path")
-            .datum(this.data.nodes[0].chSP)
+            .attr("class","line-path")
+            .datum(this.data.nodes[0].chSP.slice(0,that.activeTime))
             .attr("fill", "none")
             .attr("stroke", "steelblue")
             .attr("stroke-width", 1.5)
             .attr("stroke-linejoin", "round")
             .attr("stroke-linecap", "round")
             .attr("d", line);
-        
-
 
     }
+
+    updateLine(){
+
+        //Making line function
+        let line = d3.line()
+            // .curve(d3.curveStep)
+            .defined(d => !isNaN(d.value))
+            .x((d,i) => this.timeScale(i))
+            .y(d => this.powLoadLineScale(d.value));
+
+            
+        d3.select(".line-path")
+            .datum(this.data.nodes[0].chSP.slice(0,this.activeTime))
+            .attr("fill", "none")
+            .attr("stroke", "steelblue")
+            .attr("stroke-width", 1.5)
+            .attr("stroke-linejoin", "round")
+            .attr("stroke-linecap", "round")
+            .attr("d", line);
+
+        
+    }
+
+
 
 
     /**
