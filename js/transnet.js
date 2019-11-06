@@ -735,7 +735,7 @@ class TransNet {
 
     /** Creates a line chart */
     createLine(){
-        console.log("data in line:",this.data.nodes[0])
+        //console.log("data in line:",this.data.nodes[0])
 
         let that = this;
 
