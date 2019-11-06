@@ -17,6 +17,11 @@ class TransNet {
         this.width = 1200 - this.margin.left - this.margin.right;
         this.height = 900 - this.margin.top-this.margin.bottom; 
 
+        //Margins - the bostock way - line chart
+        this.marginL = {top: 20, right: 60, bottom: 60, left: 60};
+        this.widthL = 1100 - this.marginL.left - this.marginL.right;
+        this.heightL = 400 - this.marginL.top-this.marginL.bottom; 
+
         this.clicked = null; //my click selection - used for updating tooltip later
     }
 
@@ -95,7 +100,14 @@ class TransNet {
         /** Set Scales  */
         //Make circle size scale for bus count
         this.buscountScale = d3.scaleSqrt().domain([min_bus_count,max_bus_count]).range([5,35]);
+
+        //Color scale for station power
         this.powLoadScale = d3.scaleSequential(d3.interpolateViridis).domain([min_chsp,max_chsp]);
+
+        // Scales for line chart
+        this.powLoadLineScale = d3.scaleLinear().domain([min_chsp,max_chsp]).range([this.heightL+this.marginL.top,this.marginL.top]);
+        this.timeScale = d3.scaleLinear().domain([1,288]).range([this.marginL.left,this.marginL.left+this.widthL]);
+
         //Setting custom max because the first node skews it - have this for color setting
         this.aLoadScale = d3.scaleSequential(d3.interpolatePurples).domain([min_aload,300])
         //Make an ordinal color scale for stations
@@ -709,6 +721,85 @@ class TransNet {
             }
         });
     }
+
+    /** Creates a line chart */
+    createLine(){
+        console.log("data in line:",this.data.nodes[0].chSP[200].value)
+
+        //Create line chart svg
+        let lineSvg = d3.select(".view3").append("svg")
+                            .attr("class","lineSvg")
+                            .attr("height",400)
+                            .attr("width",1100);
+
+        //Create a chart group
+        let powStatSvg = lineSvg.append("g");
+            // .attr("transform",`translate(${this.marginL.left},${this.marginL.top})`);
+
+        // Scales for line chart
+        let yScale = this.powLoadLineScale;
+        let xScale = this.timeScale;
+
+
+        //Xaxis group
+        let xAxis = d3.axisBottom();
+        xAxis.scale(xScale);
+
+        //Y axis group
+        let yAxis = d3.axisLeft().ticks(5);;
+        yAxis.scale(yScale);
+
+        //Gridlines
+        // gridlines in y axis function 
+        function make_y_gridlines() {		
+            return d3.axisLeft(yScale)
+                .ticks(5)
+        }
+
+        // add the Y gridlines
+        powStatSvg.append("g")			
+            .attr("class", "grid")
+            .attr("transform",`translate(${this.marginL.left},0)`)
+            .call(make_y_gridlines()
+                .tickSize(-(this.widthL))
+                .tickFormat("")
+            );
+
+        //X-axis
+        powStatSvg.append("g")
+            .classed("axis",true)
+            .attr("transform",`translate(${0},${this.heightL+this.marginL.top})`)
+            .call(xAxis);
+
+        //Y-axis
+        powStatSvg.append("g")
+            .classed("axis",true)
+            .attr("transform",`translate(${this.marginL.left},${0})`)
+            .call(yAxis);
+
+        
+        //Add data to chart
+
+        //Making line function
+        let line = d3.line()
+            // .curve(d3.curveStep)
+            .defined(d => !isNaN(d.value))
+            .x((d,i) => this.timeScale(i))
+            .y(d => this.powLoadLineScale(d.value));
+
+        powStatSvg.append("path")
+            .datum(this.data.nodes[0].chSP)
+            .attr("fill", "none")
+            .attr("stroke", "steelblue")
+            .attr("stroke-width", 1.5)
+            .attr("stroke-linejoin", "round")
+            .attr("stroke-linecap", "round")
+            .attr("d", line);
+        
+
+
+    }
+
 
     /**
      * Returns html that can be used to render the tooltip for nodes

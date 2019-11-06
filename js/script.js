@@ -271,6 +271,7 @@ Promise.all([
     let transNetwork = new TransNet(transNet,powNet,bebs,time,table,updateTime);
     transNetwork.createNet();
     transNetwork.updateNet();
+    transNetwork.createLine();
     
     /** Pass data into PowNet class */
     let powNetwork = new PowNet(powNet,time);

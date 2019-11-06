@@ -2,7 +2,7 @@
 .wrapper{
     font-family: "Avenir Next";
     display: grid;
-    grid-template-columns: repeat(2, 450px) 200px 1fr;
+    grid-template-columns: repeat(2, 450px) 200px 750px;
     grid-template-rows: 0.5fr 125px 200px 200px 200px 200px 400px;
     grid-template-areas: 
             "title title title title "
@@ -11,7 +11,7 @@
             "power power power table1 "
             "power power power table1  "
             "power power power table1 "
-            "info info info info";
+            "info info info table1";
     /* width: 100vw;
     height: 100vh; */
 }
@@ -20,7 +20,7 @@
     grid-area: title;
     font-size: 50px;
     text-align: center;
-    font-weight: bolder;
+    font-weight: bold;
 }
 
 .view1{
@@ -34,6 +34,10 @@
 
 .viewsHead{
     grid-area: slider;
+}
+
+.view3{
+    grid-area: info;
 }
 
 
@@ -167,7 +171,7 @@
 
 #mytable2 tbody{
     display:block;
-    height:700px;
+    height:1150px;
     overflow:scroll;
 }
 table {
@@ -305,7 +309,7 @@ tbody tr:hover{
     position: absolute;
     float: left;
     width: 750px;
-    left: 550px;
+    left: 545px;
     top: 100px;
 }
 
@@ -313,4 +317,31 @@ tbody tr:hover{
 #scale_leg{
     font-size: 12pt;
     font-weight: lighter;
+}
+
+/* Axis styling */
+.axis path{
+    fill: none;
+    stroke: none;
+    shape-rendering: crispEdges;
+}
+
+.axis line{
+    stroke-width: 0.75px;
+}
+
+.axis text{
+    font-family: "Avenir Next";
+    font-size: 18px;
+    font-weight: lighter;
+}
+
+.grid line{
+    stroke-width: .3px;
+}
+
+.grid path{
+    fill: none;
+    stroke: none;
+    shape-rendering: crispEdges;
 }
